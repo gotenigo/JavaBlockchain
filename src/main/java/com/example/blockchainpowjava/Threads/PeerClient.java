@@ -17,6 +17,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /******************************************
  *
+ *   !!! Adding a Block into Blockchain  : we Broadcast the mined Block to the rest of the Node (miners) !!!
+ *
  *  Our PeerClient Thread  will cycle through a predetermined list of peer
  *  and try to share our blockchain  with them. Since we intend to constantly contact other peers
  *  and share our blockchain, we loop this thread  in while(true) loop. *

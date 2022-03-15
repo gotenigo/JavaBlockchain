@@ -38,6 +38,8 @@ public class PeerRequestThread extends Thread {
             System.out.println("LedgerId = " + recievedBC.getLast().getLedgerId()  +
                     " Size= " + recievedBC.getLast().getTransactionLedger().size());
 
+            // The same service layer BlockchainData is used to validate the Blockchain
+            // The nodes in the network use the same protocol to detect malicious branch of the chain.
            objectOutput.writeObject(BlockchainData.getInstance().getBlockchainConsensus(recievedBC)); //  we send back the Blockchain after running it through our consensus validation
 
         } catch (IOException | ClassNotFoundException ex) {

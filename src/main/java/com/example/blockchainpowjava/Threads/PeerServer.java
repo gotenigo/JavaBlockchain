@@ -6,6 +6,8 @@ import java.net.ServerSocket;
 
 /*******************************
  *
+ * !!! Adding a Block into Blockchain  : We get the Broadcast by another peer, and we validate the Blockchain !!!
+ *
  * This Thread responds to request of other peers. Peer connects to us via their own class PeerClient.class
  *  here we listen to certain port (defined in ECoin.Class via  new PeerServer(6000).start();)
  *Then we run PeerRequestThread Thread for each  incoming request
