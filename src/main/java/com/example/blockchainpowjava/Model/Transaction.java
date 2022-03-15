@@ -123,9 +123,13 @@ public class Transaction implements Serializable { // Needed to go through the N
       return Arrays.equals(getSignature(), that.getSignature());
    }
 
+
+
    @Override
    public int hashCode() {
       return Arrays.hashCode(getSignature());
    }
+
+
 
 }

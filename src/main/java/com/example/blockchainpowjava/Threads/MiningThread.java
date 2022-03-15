@@ -40,13 +40,13 @@ public class MiningThread extends Thread {
                     System.out.println(BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
             }
 
-            System.out.println(LocalDateTime.parse(BlockchainData.getInstance()
+            System.out.println(LocalDateTime.parse(BlockchainData.getInstance()   // we print the time of our last mined Block
                     .getCurrentBlockChain().getLast().getTimeStamp()).toEpochSecond(ZoneOffset.UTC));
 
             try {
                 Thread.sleep(2000);
                 if (BlockchainData.getInstance().isExit()) { break; }
-                BlockchainData.getInstance().setMiningPoints(BlockchainData.getInstance().getMiningPoints() + 2);
+                BlockchainData.getInstance().setMiningPoints(BlockchainData.getInstance().getMiningPoints() + 2); // 2 mining points are added
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
