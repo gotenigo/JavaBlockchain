@@ -1,7 +1,5 @@
 # BlockChain Implementation with Java.
-In this project, we will demonstrate the power of the Blockchain by implementing simple PoW Blockchain in Java.
-There are many consensus algorithms that could be used to build a Blockchain. Here, we will be using Proof of work (PoW)
-that is the most famous one. Proof of work is also used by famous Cryptocurrency BlockChain like Bitcoin and Ethereum.
+In this project, we will demonstrate the power of the Blockchain by implementing simple decentralized  Blockchain in Java.
 
 
 ## What Is A Blockchain ?
@@ -12,26 +10,6 @@ As a database, a blockchain stores information electronically in digital format.
 
 ![img_1.png](img_1.png)
 
-
-## What Is Proof of Work (PoW)?
-It's a Hash that provide proof that the transaction is valid. Proof of work (PoW) is a form of cryptographic proof in 
-which one party (the prover) proves to others (the verifiers) that a certain amount of a specific computational effort 
-has been expended. Verifiers can subsequently confirm this expenditure with minimal effort on their part. 
-The concept was invented by Cynthia Dwork and Moni Naor in 1993 as a way to deter denial-of-service attacks and other 
-service abuses such as spam on a network by requiring some work from a service requester, usually meaning processing 
-time by a computer.
-
-Variant :
-
-=>Challenge–response
-
-![img_2.png](img_2.png)
-
-
-
-=>Solution–verification
-
-![img_3.png](img_3.png)
 
 
 ## Mining a Block
@@ -47,6 +25,8 @@ The hash of a block typically consists of the following data:
 Multiple nodes in the network can compete to mine the block at the same time. 
 Apart from generating the hash, nodes also have to verify that the transactions being added in the block are legitimate. 
 **The first to mine a block wins the race**!
+
+
 
 ## Adding a Block into Blockchain
 
