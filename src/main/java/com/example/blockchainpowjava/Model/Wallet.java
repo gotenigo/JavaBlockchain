@@ -11,7 +11,7 @@ public class Wallet implements Serializable {
 
     //Constructors for generating new KeyPair
     public Wallet() throws NoSuchAlgorithmException {
-        this(2048, KeyPairGenerator.getInstance("DSA"));
+        this(2048, KeyPairGenerator.getInstance("DSA")); // recall the 2nd Constructor with default param
     }
 
 
