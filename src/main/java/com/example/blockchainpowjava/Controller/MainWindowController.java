@@ -4,6 +4,7 @@ package com.example.blockchainpowjava.Controller;
 import com.example.blockchainpowjava.Model.Transaction;
 import com.example.blockchainpowjava.ServiceData.BlockchainData;
 import com.example.blockchainpowjava.ServiceData.WalletData;
+import com.example.blockchainpowjava.Threads.UI;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -59,7 +60,7 @@ public class MainWindowController {
         Dialog<ButtonType> newTransactionController = new Dialog<>();
         newTransactionController.initOwner(borderPane.getScene().getWindow());
         FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("../View/AddNewTransactionWindow.fxml"));
+        fxmlLoader.setLocation(UI.class.getResource("AddNewTransactionWindow.fxml"));
         try {
             newTransactionController.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
