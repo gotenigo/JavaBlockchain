@@ -30,6 +30,7 @@ public class PeerClient extends Thread {
 
 
             try (Socket socket = new Socket("127.0.0.1", queue.peek())) {  // try-with-resources (introduced in Java 7)
+                   // allows us to declare resources to be used in a try block with the assurance that the resources will be closed after the execution of that block.
 
                 System.out.println("Sending blockchain object on port: " + queue.peek());
                 queue.add(queue.poll()); // rotate the port order
