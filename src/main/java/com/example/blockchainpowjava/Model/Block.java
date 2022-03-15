@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+//Represent a single Block of the Blockchain
 public class Block implements Serializable {
 
     private byte[] prevHash; //Hash of the previous block, an important part to build the chain

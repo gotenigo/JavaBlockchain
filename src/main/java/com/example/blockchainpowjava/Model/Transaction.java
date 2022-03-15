@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
 
+
+//Represent a Blockchain Transaction. one Block will have a List<Transaction>
 public class Transaction implements Serializable { // Needed to go through the Network
 
    private byte[] from; //public key (address) of the sender
@@ -56,20 +58,25 @@ public class Transaction implements Serializable { // Needed to go through the N
       this.timestamp = LocalDateTime.now().toString();
       signing.initSign(fromWallet.getPrivateKey());
       String sr = this.toString();
-      signing.update(sr.getBytes());
-      this.signature = signing.sign();  // For more details look at http://tutorials.jenkov.com/java-cryptography/signature.html
+      signing.update(sr.getBytes()); // Here we provide data we want to Sign
+      this.signature = signing.sign();  // Here we sign all the data defined in update().For more details look at http://tutorials.jenkov.com/java-cryptography/signature.html
       this.signatureFX = encoder.encodeToString(this.signature);
 
    }
 
 
-
+   // We can verify the signature here via signing object
+   //this method will be used by other peers to verify that each transaction is valid
    public Boolean isVerified(Signature signing)
            throws InvalidKeyException, SignatureException {
-      signing.initVerify(new DSAPublicKeyImpl(this.getFrom()));
+
+      signing.initVerify(new DSAPublicKeyImpl(this.getFrom())); // init by with DSA algorithms SHA256
       signing.update(this.toString().getBytes());
       return signing.verify(this.signature);
+
    }
+
+
 
    @Override
    public String toString() {
@@ -81,6 +88,9 @@ public class Transaction implements Serializable { // Needed to go through the N
               ", ledgerId=" + ledgerId +
               '}';
    }
+
+
+
 
    public byte[] getFrom() { return from; }
    public void setFrom(byte[] from) { this.from = from; }
@@ -100,6 +110,9 @@ public class Transaction implements Serializable { // Needed to go through the N
    public String getFromFX() { return fromFX; }
    public String getToFX() { return toFX; }
    public String getSignatureFX() { return signatureFX; }
+
+
+
 
 
    @Override

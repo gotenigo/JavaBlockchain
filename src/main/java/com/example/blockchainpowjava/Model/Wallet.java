@@ -3,6 +3,8 @@ package com.example.blockchainpowjava.Model;
 import java.io.Serializable;
 import java.security.*;
 
+
+//Represent a Blockchain Wallet
 public class Wallet implements Serializable {
 
     private KeyPair keyPair;
