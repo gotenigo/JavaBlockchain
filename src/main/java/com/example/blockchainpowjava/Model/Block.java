@@ -14,17 +14,21 @@ import java.util.LinkedList;
 
 public class Block implements Serializable {
 
-    private byte[] prevHash;
-    private byte[] currHash;
-    private String timeStamp;
-    private byte[] minedBy;
-    private Integer ledgerId = 1;
+    private byte[] prevHash; //Hash of the previous block, an important part to build the chain
+    private byte[] currHash;  //the hash of this block. The Hash here is calculated with the private key of miner who got to mine this Block
+    private String timeStamp; // The timestamp of the creation of this block (when it was mined)
+    private byte[] minedBy; // will hold the public key of the miner who managed to mine that block. this value is used in the Verification process to check the currHash is valid
+    private Integer ledgerId = 1; // this field helps us to identity the correct Ledger for this block. helpful for Database lookup against table Block and Transaction
     private Integer miningPoints = 0;
     private Double luck = 0.0;
 
-    private ArrayList<Transaction> transactionLedger = new ArrayList<>();
+    // this is simpy an ArrayList of all transaction containing in this Block
+    private ArrayList<Transaction> transactionLedger = new ArrayList<>(); //The actual data, any information having value, like a contract , Transaction
+
 
     //This constructor is used when we retrieve it from the db
+    // Here we retrieve all the blocks completely finalized
+    //this constructor helps us to instantiate the block with all the fields properly
     public Block(byte[] prevHash, byte[] currHash, String timeStamp, byte[] minedBy,Integer ledgerId,
                  Integer miningPoints, Double luck, ArrayList<Transaction> transactionLedger) {
         this.prevHash = prevHash;
@@ -39,6 +43,8 @@ public class Block implements Serializable {
 
 
     //This constructor is used when we initiate it after retrieve.
+    // This constructor is used while the application is running
+    // it's used to create a completely new Block (in other world, the head of the Blockchain)
     public Block(LinkedList<Block> currentBlockChain) {
         Block lastBlock = currentBlockChain.getLast();
         prevHash = lastBlock.getCurrHash();
@@ -47,17 +53,29 @@ public class Block implements Serializable {
     }
 
 
+    //This constructor is only used by init() method to create the 1st Block
     //This constructor is used only for creating the first block in the blockchain.
     public Block() {
         prevHash = new byte[]{0};
     }
 
 
-    public Boolean isVerified(Signature signing)
+
+
+    //Signature is a Class from java security package (java.security.Signature)
+    //it can create a digital signature for binary data.
+    //A digital signature is a message digest encrypted with a private key of a private / public key pair.
+    // Anyone in possession of the public key can verify the digital signature.
+    //Signature is a helper singleton class that allows us to encrypt/decrypt data using different Algorithms
+    public Boolean isVerified(Signature signature)
             throws InvalidKeyException, SignatureException {
-        signing.initVerify(new DSAPublicKeyImpl(this.minedBy));
-        signing.update(this.toString().getBytes());
-        return signing.verify(this.currHash);
+
+        signature.initVerify(new DSAPublicKeyImpl(this.minedBy));// We initiate the signature parameter  by using public Key  from minedBy
+        signature.update(this.toString().getBytes()); // we insert the Data we want to verify (data in clear).
+                                            // in this case, its the content of the String Method : prevHash + timeStamp + minedBy + ledgerId + miningPoints + luck
+
+        return signature.verify(this.currHash); // Return Boolean  after verifying the dara contained in this class against currHash
+
     }
 
 
@@ -75,6 +93,7 @@ public class Block implements Serializable {
     public int hashCode() {
         return Arrays.hashCode(getPrevHash());
     }
+
 
     public byte[] getPrevHash() { return prevHash; }
     public byte[] getCurrHash() { return currHash; }

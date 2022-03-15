@@ -28,7 +28,7 @@ public class PeerClient extends Thread {
 
         while (true) {
 
-
+            //Creates a stream socket and connects it to the specified port number on the named host.
             try (Socket socket = new Socket("127.0.0.1", queue.peek())) {  // try-with-resources (introduced in Java 7)
                    // allows us to declare resources to be used in a try block with the assurance that the resources will be closed after the execution of that block.
 
