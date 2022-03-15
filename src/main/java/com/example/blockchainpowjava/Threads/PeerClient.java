@@ -49,9 +49,9 @@ public class PeerClient extends Thread {
                 ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
                 ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
 
-                LinkedList<Block> blockChain = BlockchainData.getInstance().getCurrentBlockChain(); // we use the service layer to get the Blockchain object
+                LinkedList<Block> blockChain = BlockchainData.getInstance().getCurrentBlockChain(); // we use the service layer to get the Blockchain object which is a LinkedList<Block>
                 objectOutput.writeObject(blockChain); // Send the Blockchain via the port
-
+                                                                                                    // Object should be a LinkedList<Block>
                 LinkedList<Block> returnedBlockchain = (LinkedList<Block>) objectInput.readObject(); // Read the Blockchain from port (the blockchain send by other Miner on the Network)
 
                 System.out.println(" RETURNED BC LedgerId = " + returnedBlockchain.getLast().getLedgerId()  +

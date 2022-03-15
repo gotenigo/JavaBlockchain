@@ -10,13 +10,18 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.LinkedList;
 
-
+/*********************************************
+ *
+ *  This Thread handles each specific request that arrives at this peer
+ *
+ *
+ *************************************/
 public class PeerRequestThread extends Thread {
 
     private Socket socket;
 
     public PeerRequestThread(Socket socket) {
-        this.socket = socket;
+        this.socket = socket; //socket present the link to the peer that sent the request
     }
 
     @Override
@@ -28,12 +33,12 @@ public class PeerRequestThread extends Thread {
             ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
 
-            LinkedList<Block> recievedBC = (LinkedList<Block>) objectInput.readObject(); // read from the  InputStream
+            LinkedList<Block> recievedBC = (LinkedList<Block>) objectInput.readObject(); // read from the  InputStream. We should ge a LinkedList<Block>
 
             System.out.println("LedgerId = " + recievedBC.getLast().getLedgerId()  +
                     " Size= " + recievedBC.getLast().getTransactionLedger().size());
 
-           objectOutput.writeObject(BlockchainData.getInstance().getBlockchainConsensus(recievedBC)); // write to the  OutputStream
+           objectOutput.writeObject(BlockchainData.getInstance().getBlockchainConsensus(recievedBC)); //  we send back the Blockchain after running it through our consensus validation
 
         } catch (IOException | ClassNotFoundException ex) {
             ex.printStackTrace();

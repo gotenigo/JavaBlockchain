@@ -42,8 +42,8 @@ public class ECoin extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         new UI().start(primaryStage);
-        new PeerClient().start();
-        new PeerServer(6000).start();
+        new PeerClient().start();  // we start PeerClient Thread  to send nd receive Blockchain from other Node operator
+        new PeerServer(6000).start(); // we start PeerServer Thread to keep listening Network request from Node operator
         new MiningThread().start();
 
     }
