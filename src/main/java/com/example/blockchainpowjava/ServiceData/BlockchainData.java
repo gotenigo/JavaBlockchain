@@ -25,7 +25,7 @@ public class BlockchainData {
     private Block latestBlock;
     private boolean exit = false;
     private int miningPoints;
-    private static final int TIMEOUT_INTERVAL = 65;
+    private static final int TIMEOUT_INTERVAL = 65;    // timeout Interval used to define if the Blockchain is too old
     private static final int MINING_INTERVAL = 60;
     //helper class.
     private Signature signing = Signature.getInstance("SHA256withDSA");
