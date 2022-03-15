@@ -12,6 +12,13 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.sql.*;
 
+/***********************************************************************
+ *
+ *  This class is used to store our wallet while our application is running
+ *   and make it available to every other  part of our application
+ *
+ *
+ *****************************************************************/
 public class WalletData {
 
     private Wallet wallet;
