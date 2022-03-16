@@ -403,16 +403,16 @@ public class BlockchainData {
      *  This Method executes the consensus Algorithms. This is the heart of the technology.
      *  This consensus  resolves the so-called Byzantine problem.
      *
+     * we will be performing validation checks and several comparisons between our Blockchain
+     *   and the one we receive here in parameter LinkedList<Block> receivedBC
      *
-     *
-     *
-     * @param receivedBC
+     * @param receivedBC   -LinkedList<Block>  represents the Blockchain we have received from peer / miner
      * @return
      ******************************************************************************/
     public LinkedList<Block> getBlockchainConsensus(LinkedList<Block> receivedBC) {
         try {
             //Verify the validity of the received blockchain.
-            verifyBlockChain(receivedBC);
+            verifyBlockChain(receivedBC); // we need to very each Blockchain we get from peer
             //Check if we have received an identical blockchain.
             if (!Arrays.equals(receivedBC.getLast().getCurrHash(), getCurrentBlockChain().getLast().getCurrHash())) {
                 if (checkIfOutdated(receivedBC) != null) {
