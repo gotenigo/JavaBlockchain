@@ -43,16 +43,18 @@ public class WalletData {
         Statement walletStatment = walletConnection.createStatement();
         ResultSet resultSet;
         resultSet = walletStatment.executeQuery(" SELECT * FROM WALLET ");
-        KeyFactory keyFactory = KeyFactory.getInstance("DSA"); // this is
+
+        KeyFactory keyFactory = KeyFactory.getInstance("DSA"); // this is Class from java.security package. It will help us to generate a  PublicKey/ PrivateKey Object
+
         PublicKey pub2 = null;
         PrivateKey prv2 = null;
         while (resultSet.next()) {
-            pub2 = keyFactory.generatePublic(
-                    new X509EncodedKeySpec(resultSet.getBytes("PUBLIC_KEY")));
+            pub2 = keyFactory.generatePublic(   // generatePublic takes only KeySpec as param  -> generatePublic( KeySpec ks)
+                    new X509EncodedKeySpec(resultSet.getBytes("PUBLIC_KEY")));  // we create a KeySpec object thanks to  X509EncodedKeySpec
             prv2 = keyFactory.generatePrivate(
-                    new PKCS8EncodedKeySpec(resultSet.getBytes("PRIVATE_KEY")));
+                    new PKCS8EncodedKeySpec(resultSet.getBytes("PRIVATE_KEY"))); // we create a KeySpec object thanks to  X509EncodedKeySpec
         }
-        this.wallet = new Wallet(pub2, prv2);
+        this.wallet = new Wallet(pub2, prv2);  // Here we create a wallet using our  public + private key
     }
 
     public Wallet getWallet() {
