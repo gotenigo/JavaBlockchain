@@ -54,10 +54,14 @@ public class WalletData {
             prv2 = keyFactory.generatePrivate(
                     new PKCS8EncodedKeySpec(resultSet.getBytes("PRIVATE_KEY"))); // we create a KeySpec object thanks to  X509EncodedKeySpec
         }
-        this.wallet = new Wallet(pub2, prv2);  // Here we create a wallet using our  public + private key
+        this.wallet = new Wallet(pub2, prv2);  // Here we create a wallet using our  public + private key we retrieved from the database
     }
+
+
 
     public Wallet getWallet() {
         return wallet;
     }
+
+
 }
