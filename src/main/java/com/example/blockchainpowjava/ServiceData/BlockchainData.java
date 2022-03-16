@@ -423,7 +423,7 @@ public class BlockchainData {
                 // We need to work out which miner gets to mine the last block
 
                 if (checkIfOutdated(receivedBC) != null) {  // if the Blockchain  is outdated (older than the mining interval), then the Blockchain wont be selected
-                              // if out is outdated, then we keep the Received blockchain. If both are outdated, then we dont do anything and we wait for the next UP-to-date Blockchain
+                              // if out outdated, then we keep the Received blockchain. If both are outdated, then we dont do anything and we wait for the next UP-to-date Blockchain
 
                     return getCurrentBlockChain();
 
