@@ -24,9 +24,6 @@ import java.util.LinkedList;
  *  our Blockchain. This Class is Singleton class.
  *
  *
- *
- *
- *
  * ****************************************************************************/
 
 
