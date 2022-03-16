@@ -12,7 +12,7 @@ As a database, a blockchain stores information electronically in digital format.
 ![img_1.png](img_1.png)
 
 
-## What Is Pow (Proof Of Work) ?
+## What Is PoW (Proof Of Work) ?
 In simple term, it's a Hash that provides the proof the transaction is valid. It's  cryptographic proof in which 
 one party (the prover) proves to others (the verifiers) that a certain amount of a specific computational effort 
 has been expended. Verifiers can subsequently confirm this expenditure with minimal effort on their part. 
