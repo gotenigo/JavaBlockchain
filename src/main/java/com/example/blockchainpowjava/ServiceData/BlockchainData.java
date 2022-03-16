@@ -17,23 +17,39 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-public class BlockchainData {
 
-    private ObservableList<Transaction> newBlockTransactionsFX;
-    private ObservableList<Transaction> newBlockTransactions;
-    private LinkedList<Block> currentBlockChain = new LinkedList<>();
-    private Block latestBlock;
-    private boolean exit = false;
-    private int miningPoints;
+/***************************************************************************
+ *
+ *  This is the biggest and most complex class in our application. Here we can find all  the functionality regarding
+ *  our Blockchain. This Class is Singleton class.
+ *
+ *
+ *
+ *
+ *
+ * ****************************************************************************/
+
+
+public class BlockchainData {
+                                                        //ObservableList is a list that allows listeners to track changes when they occur.
+    private ObservableList<Transaction> newBlockTransactionsFX;  // We define a Transaction as a ObservableList (FXCollections - javafx.collections ) . ObservableList adds a way to listen for changes on a list
+    private ObservableList<Transaction> newBlockTransactions;  // The List will hold the transaction of the Blockchain. it represents the current ledger of our Blockchain
+
+    private LinkedList<Block> currentBlockChain = new LinkedList<>(); // This is our current Blockchain. It' s a LinkedList<Block>
+
+    private Block latestBlock; // represent the latest Block we are trying to add to the Blockchain
+    private boolean exit = false; // exit Boolean that helps the exit command for our front-end-work
+    private int miningPoints; // help us to track the mining point  that we use in our consensus Algorithms
     private static final int TIMEOUT_INTERVAL = 65;    // timeout Interval used to define if the Blockchain is too old
-    private static final int MINING_INTERVAL = 60;
+    private static final int MINING_INTERVAL = 60;     //another time-out
+
     //helper class.
-    private Signature signing = Signature.getInstance("SHA256withDSA");
+    private Signature signing = Signature.getInstance("SHA256withDSA"); //Java Signature that helps us  to create a Signature
 
     //singleton class
     private static BlockchainData instance;
 
-    static {
+    static {   // Static object that helps to make this class a Singleton class
         try {
             instance = new BlockchainData();
         } catch (NoSuchAlgorithmException e) {
@@ -50,57 +66,86 @@ public class BlockchainData {
         return instance;
     }
 
-    Comparator<Transaction> transactionComparator = Comparator.comparing(Transaction::getTimestamp);
-    public ObservableList<Transaction> getTransactionLedgerFX() {
-        newBlockTransactionsFX.clear();
+    Comparator<Transaction> transactionComparator = Comparator.comparing(Transaction::getTimestamp); // comparator used to  sort Transaction at time of creation
+
+
+    public ObservableList<Transaction> getTransactionLedgerFX() {  // display the current Transaction ledger
+        newBlockTransactionsFX.clear();                         // transfer the transaction from the current ledger to an ObservableList that we can display to UI
         newBlockTransactions.sort(transactionComparator);
         newBlockTransactionsFX.addAll(newBlockTransactions);
         return FXCollections.observableArrayList(newBlockTransactionsFX);
     }
 
+
+    /*******************
+     *  This Method is used to retrieve our own current balance when we need it throughout the application
+     *
+     * @return
+     *************/
     public String getWalletBallanceFX() {
         return getBalance(currentBlockChain, newBlockTransactions,
-                WalletData.getInstance().getWallet().getPublicKey()).toString();
+                            WalletData.getInstance().getWallet().getPublicKey()).toString();
     }
 
+    /**************************************
+    //  getBalance() :: this Method go through the given Blockchain and a current ledger with potential transactions
+    // for the new block and finds the balance for the given public address
+    // but also it verifies if certain address has  enough coins before sending them
+     *********************************************/
     private Integer getBalance(LinkedList<Block> blockChain,
                                ObservableList<Transaction> currentLedger, PublicKey walletAddress) {
         Integer balance = 0;
-        for (Block block : blockChain) {
+        for (Block block : blockChain) { // we got through each Block of the Blockchain.
             for (Transaction transaction : block.getTransactionLedger()) {
-                if (Arrays.equals(transaction.getFrom(), walletAddress.getEncoded())) {
-                    balance -= transaction.getValue();
+                if (Arrays.equals(transaction.getFrom(), walletAddress.getEncoded())) { // check if we are sending fund
+                    balance -= transaction.getValue();             // if so, we debit the balance
                 }
-                if (Arrays.equals(transaction.getTo(), walletAddress.getEncoded())) {
-                    balance += transaction.getValue();
+                if (Arrays.equals(transaction.getTo(), walletAddress.getEncoded())) { // check if we are receiving fund
+                    balance += transaction.getValue(); // if so, we credit the balance
                 }
             }
         }
-        for (Transaction transaction : currentLedger) {
-            if (Arrays.equals(transaction.getFrom(), walletAddress.getEncoded())) {
-                balance -= transaction.getValue();
-            }
+        for (Transaction transaction : currentLedger) { // to prevent double spending, we also need to subtract
+            if (Arrays.equals(transaction.getFrom(), walletAddress.getEncoded())) { //any fund we are already trying to send
+                balance -= transaction.getValue();                               // that exist in the current transaction ledger
+            }     // !! remember, double spending is a situation where user sends total fund 2 times. So effectively creating fund out of thin air
         }
-        return balance;
+        return balance; // we return the fund after calculation
     }
 
+
+    /********************************
+     *   This method validate our own Blockchain as well as the Blockchain received by other peer (miners) on the network
+     *   This method that actually checks the validity  of each transaction and each blocks
+     *
+     * @param currentBlockChain
+     * @throws GeneralSecurityException
+     **************************/
     private void verifyBlockChain(LinkedList<Block> currentBlockChain) throws GeneralSecurityException {
-        for (Block block : currentBlockChain) {
+        for (Block block : currentBlockChain) { // go through each Block
+
             if (!block.isVerified(signing)) {
                 throw new GeneralSecurityException("Block validation failed");
             }
-            ArrayList<Transaction> transactions = block.getTransactionLedger();
+
+            ArrayList<Transaction> transactions = block.getTransactionLedger();  // then go through the Transaction of the particular Block
             for (Transaction transaction : transactions) {
                 if (!transaction.isVerified(signing)) {
                     throw new GeneralSecurityException("Transaction validation failed");
                 }
             }
+
+
         }
     }
+
+
     public void addTransactionState(Transaction transaction) {
         newBlockTransactions.add(transaction);
         newBlockTransactions.sort(transactionComparator);
     }
+
+
 
     public void addTransaction(Transaction transaction, boolean blockReward) throws GeneralSecurityException {
         try {
