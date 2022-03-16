@@ -1,7 +1,8 @@
 # BlockChain Implementation with Java.
 In this project, we will demonstrate the power of the Blockchain by implementing simple decentralized  Blockchain in Java.
-The consensus Algorithm used here will be a variant of Pow (Proof Of Work). This Blockchain  creates new coins 
-for each reward Transaction, and it allocates the award to the miner that computed the Block.
+The consensus Algorithm used here will be a variant of Pow (Proof Of Work) like the famous cryptocurrency Bitcoin
+and Ethereum. Our Blockchain  will be creating a new coins for each reward Transaction, and it allocates 
+the award to the miner that computed the Block.
 
 
 ## What Is A Blockchain ?
