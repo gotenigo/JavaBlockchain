@@ -404,7 +404,9 @@ public class BlockchainData {
      *  This consensus  resolves the so-called Byzantine problem.
      *
      * we will be performing validation checks and several comparisons between our Blockchain
-     *   and the one we receive here in parameter LinkedList<Block> receivedBC
+     *   and the one we receive here from other miner/peer on the Network. -> in parameter LinkedList<Block> receivedBC
+     *
+     *   we constantly try to share our Blockchain with other peers/miners. So getBlockchainConsensus()  gets to run  repeatedly
      *
      * @param receivedBC   -LinkedList<Block>  represents the Blockchain we have received from peer / miner
      * @return
@@ -413,23 +415,34 @@ public class BlockchainData {
         try {
             //Verify the validity of the received blockchain.
             verifyBlockChain(receivedBC); // we need to very each Blockchain we get from peer
+
             //Check if we have received an identical blockchain.
-            if (!Arrays.equals(receivedBC.getLast().getCurrHash(), getCurrentBlockChain().getLast().getCurrHash())) {
-                if (checkIfOutdated(receivedBC) != null) {
+            if (!Arrays.equals(receivedBC.getLast().getCurrHash(), getCurrentBlockChain().getLast().getCurrHash())) { // this is the 1st comparison. We check both Blockchain's Block via the getLast() method
+
+                // from here, it means both Blockchain have different miner on the last Block. Then we have to perform our consensus.
+                // We need to work out which miner gets to mine the last block
+
+                if (checkIfOutdated(receivedBC) != null) {  // if the Blockchain  is outdated (older than the mining interval), then the Blockchain wont be selected
+                              // if out is outdated, then we keep the Received blockchain. If both are outdated, then we dont do anything and we wait for the next UP-to-date Blockchain
+
                     return getCurrentBlockChain();
-                } else {
-                    if (checkWhichIsCreatedFirst(receivedBC) != null) {
+
+                } else { // both Blockchains are up-to-date
+
+                    if (checkWhichIsCreatedFirst(receivedBC) != null) { // checkWhichIsCreatedFirst checks  which one was created 1st (look at the 1st Block for that) and both dont start with the same block
                         return getCurrentBlockChain();
-                    } else {
-                        if (compareMiningPointsAndLuck(receivedBC) != null) {
+                    } else {  // !!!! If we are here, it means both Blockchain are valid, and they are identical until the final Block
+                        if (compareMiningPointsAndLuck(receivedBC) != null) {  // compare Mining Points And Luck . The selected Blockchain will be rule out by a luck (random number)
                             return getCurrentBlockChain();
                         }
                     }
+
                 }
-                // if only the transaction ledgers are different then combine them.
-            } else if (!receivedBC.getLast().getTransactionLedger().equals(getCurrentBlockChain()
+             // if both blockchain have the same last Block ( both Hash are the same )
+             // if only the transaction ledgers are different then combine them.
+            } else if (!receivedBC.getLast().getTransactionLedger().equals(getCurrentBlockChain() // Here we compare the Transaction ledger
                     .getLast().getTransactionLedger())) {
-                updateTransactionLedgers(receivedBC);
+                updateTransactionLedgers(receivedBC);   // we merge both transaction
                 System.out.println("Transaction ledgers updated");
                 return receivedBC;
             } else {
@@ -440,6 +453,10 @@ public class BlockchainData {
         }
         return receivedBC;
     }
+
+
+
+
 
     private void updateTransactionLedgers(LinkedList<Block> receivedBC) throws GeneralSecurityException {
         for (Transaction transaction : receivedBC.getLast().getTransactionLedger()) {
@@ -458,6 +475,12 @@ public class BlockchainData {
         receivedBC.getLast().getTransactionLedger().sort(transactionComparator);
     }
 
+
+    /*************************************************
+     *
+     * @param receivedBC
+     * @return
+     ************************************************/
     private LinkedList<Block> checkIfOutdated(LinkedList<Block> receivedBC) {
         //Check how old the blockchains are.
         long lastMinedLocalBlock = LocalDateTime.parse
