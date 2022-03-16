@@ -145,7 +145,7 @@ public class ECoin extends Application {
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }
-        BlockchainData.getInstance().loadBlockChain();
+        BlockchainData.getInstance().loadBlockChain();   // !!!!! We reload the entire Blockchain from the Database
     }
 }
 

@@ -190,9 +190,13 @@ public class BlockchainData {
     }
 
 
-
-
-
+    /***************************************************************
+     *
+     *    loadBlockChain()  ::  this method is used whenever we want to load the entire Blockchain
+     *    from the database. For example, if we want to re-set the state of the app, then we will use that method
+     *
+     *
+     ***************************************************************/
     public void loadBlockChain() {
         try {
             Connection connection = DriverManager.getConnection
@@ -200,7 +204,7 @@ public class BlockchainData {
             Statement stmt = connection.createStatement();
             ResultSet resultSet = stmt.executeQuery(" SELECT * FROM BLOCKCHAIN ");
             while (resultSet.next()) {
-                this.currentBlockChain.add(new Block(
+                this.currentBlockChain.add(new Block(        // each Block holds a List<Transaction> . And Each Transaction comes under an Id called ledgerID (Integer)
                         resultSet.getBytes("PREVIOUS_HASH"),
                         resultSet.getBytes("CURRENT_HASH"),
                         resultSet.getString("CREATED_ON"),
@@ -208,17 +212,19 @@ public class BlockchainData {
                         resultSet.getInt("LEDGER_ID"),
                         resultSet.getInt("MINING_POINTS"),
                         resultSet.getDouble("LUCK"),
-                        loadTransactionLedger(resultSet.getInt("LEDGER_ID"))
+                        loadTransactionLedger(resultSet.getInt("LEDGER_ID"))  //   resolve the  ArrayList<Transaction> transactionLedger with the ledgerID
                 ));
             }
 
-            latestBlock = currentBlockChain.getLast();
-            Transaction transaction = new Transaction(new Wallet(),
+            latestBlock = currentBlockChain.getLast();   // we set the latestBlock with the last Block from the current Blockchain (LinkedList<Block> currentBlockChain)
+
+            Transaction transaction = new Transaction(new Wallet(),  // we create a new reward Transaction. This is reward Transaction for our future Block
                     WalletData.getInstance().getWallet().getPublicKey().getEncoded(),
                     100, latestBlock.getLedgerId() + 1, signing);
-            newBlockTransactions.clear();
+
+            newBlockTransactions.clear();    // Remember !!! ObservableList<Transaction> newBlockTransactions
             newBlockTransactions.add(transaction);
-            verifyBlockChain(currentBlockChain);
+            verifyBlockChain(currentBlockChain); //  we call Verify Blockchain method  on the current Blockchain we just loaded from the Database. This needed as we might import Blockchain from someone else Database
             resultSet.close();
             stmt.close();
             connection.close();
@@ -230,6 +236,19 @@ public class BlockchainData {
         }
     }
 
+
+
+
+
+    /*********************************************
+     *
+     *  This method load the transaction ledger for each block from the database to the application
+     *
+     *
+     * @param ledgerID
+     * @return
+     * @throws SQLException
+     *****************************************/
     private ArrayList<Transaction> loadTransactionLedger(Integer ledgerID) throws SQLException {
         ArrayList<Transaction> transactions = new ArrayList<>();
         try {
@@ -258,34 +277,62 @@ public class BlockchainData {
         return transactions;
     }
 
+
+    /****************************************************************
+     *
+     *   This method is called by the MiningThread class when it's time to mine new block
+     *
+     ****************************************************************/
     public void mineBlock() {
         try {
-            finalizeBlock(WalletData.getInstance().getWallet());
-            addBlock(latestBlock);
+
+            finalizeBlock(WalletData.getInstance().getWallet()); // performs the necessary steps to finish up the finish  up the latest block
+                                                                // and adds it to our current Blockchain (LinkedList<Block> currentBlockChain)
+            addBlock(latestBlock); // we add the latestBlock to the Database
+
         } catch (SQLException | GeneralSecurityException e) {
             System.out.println("Problem with DB: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+
+    /***************************************
+     *
+     * This method performs the necessary steps to finish up the finish  up the latest block
+     *   and adds it to our current Blockchain (LinkedList<Block> currentBlockChain)
+     *
+     *
+     * @param minersWallet
+     * @throws GeneralSecurityException
+     * @throws SQLException
+     ***********************************/
     private void finalizeBlock(Wallet minersWallet) throws GeneralSecurityException, SQLException {
-        latestBlock = new Block(BlockchainData.getInstance().currentBlockChain);
+
+        latestBlock = new Block(BlockchainData.getInstance().currentBlockChain); // we prepare/finalize the latest Block
         latestBlock.setTransactionLedger(new ArrayList<>(newBlockTransactions));
-        latestBlock.setTimeStamp(LocalDateTime.now().toString());
-        latestBlock.setMinedBy(minersWallet.getPublicKey().getEncoded());
-        latestBlock.setMiningPoints(miningPoints);
+        latestBlock.setTimeStamp(LocalDateTime.now().toString());   // we set the timestamp to the current time
+        latestBlock.setMinedBy(minersWallet.getPublicKey().getEncoded()); // we set our own wallet address since we are  trying to mine this Block
+        latestBlock.setMiningPoints(miningPoints); // we set the current mining point we have accumulated
+
+
         signing.initSign(minersWallet.getPrivateKey());
         signing.update(latestBlock.toString().getBytes());
-        latestBlock.setCurrHash(signing.sign());
+        latestBlock.setCurrHash(signing.sign()); // we sign the Block
         currentBlockChain.add(latestBlock);
-        miningPoints = 0;
+        miningPoints = 0; // we reset our mining point to 0
         //Reward transaction
         latestBlock.getTransactionLedger().sort(transactionComparator);
-        addTransaction(latestBlock.getTransactionLedger().get(0), true);
-        Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),
+
+        addTransaction(latestBlock.getTransactionLedger().get(0), true); // we add the reward transaction of the  Block we have just finalized to the Database.
+                                                                    // Until now, we kept it in newBlockTransactions list (ObservableList<Transaction>), which
+                                                                    // we copied in our latestBlock
+
+        Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create biw  a bew reward transaction
                 100, latestBlock.getLedgerId() + 1, signing);
-        newBlockTransactions.clear();
-        newBlockTransactions.add(transaction);
+        newBlockTransactions.clear(); // newBlockTransactions contains now an old transaction  of the block we have finalized. So we clear newBlockTransactions out
+        newBlockTransactions.add(transaction); // !!! newBlockTransactions is now loaded with the next reward transaction for the next mining cycle
+                                                // This reward Transaction is what the miner gets for  successfully mining the next block
     }
 
     private void addBlock(Block block) {
@@ -312,6 +359,13 @@ public class BlockchainData {
         }
     }
 
+
+    /*****************************************************
+     *
+     *
+     *
+     * @param receivedBC
+     ***************************************************/
     private void replaceBlockchainInDatabase(LinkedList<Block> receivedBC) {
         try {
             Connection connection = DriverManager.getConnection
@@ -322,11 +376,18 @@ public class BlockchainData {
             clearDBStatement.close();
             connection.close();
             for (Block block : receivedBC) {
-                addBlock(block);
+
+                //                    ("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH, LEDGER_ID, CREATED_ON," +
+                //                            " CREATED_BY, MINING_POINTS, LUCK) VALUES (?,?,?,?,?,?,?) ");
+                addBlock(block);             //  !!! we add the  Block into the database
+
                 boolean rewardTransaction = true;
                 block.getTransactionLedger().sort(transactionComparator);
                 for (Transaction transaction : block.getTransactionLedger()) {
-                    addTransaction(transaction, rewardTransaction);
+
+                    //"INSERT INTO TRANSACTIONS" + "(\"FROM\", \"TO\", LEDGER_ID, VALUE, SIGNATURE, CREATED_ON) " +" VALUES (?,?,?,?,?,?) ");
+                    addTransaction(transaction, rewardTransaction);  // !!! We add the reward transaction into the database   //
+
                     rewardTransaction = false;
                 }
             }
@@ -336,6 +397,18 @@ public class BlockchainData {
         }
     }
 
+
+    /*************************************************************************
+     *
+     *  This Method executes the consensus Algorithms. This is the heart of the technology.
+     *  This consensus  resolves the so-called Byzantine problem.
+     *
+     *
+     *
+     *
+     * @param receivedBC
+     * @return
+     ******************************************************************************/
     public LinkedList<Block> getBlockchainConsensus(LinkedList<Block> receivedBC) {
         try {
             //Verify the validity of the received blockchain.
