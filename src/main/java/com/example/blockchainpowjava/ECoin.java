@@ -136,7 +136,7 @@ public class ECoin extends Application {
             );
             if (initBlockRewardTransaction != null) {
                 BlockchainData.getInstance().addTransaction(initBlockRewardTransaction,true);
-                BlockchainData.getInstance().addTransactionState(initBlockRewardTransaction);
+                BlockchainData.getInstance().addTransactionState(initBlockRewardTransaction);  // !!!  Simply   add a transaction into our current transaction ledger
             }
             blockchainStmt.close();
             blockchainConnection.close();

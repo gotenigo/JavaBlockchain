@@ -149,7 +149,15 @@ public class BlockchainData {
     }
 
 
-
+    /**********************************
+     *
+     *  Add a new Transaction into our Ledger
+     *
+     * @param transaction   Transaction Object
+     * @param blockReward boolean -  its ita reward Transaction for the miner ? Or is it regular Transaction
+     *                              Flag this transaction  in order to skip the coin balance check performed by getBalance()
+     * @throws GeneralSecurityException
+     */
     public void addTransaction(Transaction transaction, boolean blockReward) throws GeneralSecurityException {
         try {
             if (getBalance(currentBlockChain, newBlockTransactions,
