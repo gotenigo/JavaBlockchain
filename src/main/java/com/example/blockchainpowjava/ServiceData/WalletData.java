@@ -43,7 +43,7 @@ public class WalletData {
         Statement walletStatment = walletConnection.createStatement();
         ResultSet resultSet;
         resultSet = walletStatment.executeQuery(" SELECT * FROM WALLET ");
-        KeyFactory keyFactory = KeyFactory.getInstance("DSA");
+        KeyFactory keyFactory = KeyFactory.getInstance("DSA"); // this is
         PublicKey pub2 = null;
         PrivateKey prv2 = null;
         while (resultSet.next()) {
