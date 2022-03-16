@@ -17,6 +17,12 @@ import java.time.ZoneOffset;
 
  It uses the service BlockchainData to feed with the date when the last Block was mined
 
+
+ Please note - all Node (peer) will all create local blocks and try to push theirs to stick,
+ the one that sticks will be the one with the most mining points written on it,
+ each client gets 1 point for each second spent runing. I used a simpler alternative to hashcash
+ so that I can explain the consensus algorithm better, hence you get this one you should be able to replace it with any other.
+
 **************************************/
 public class MiningThread extends Thread {
 

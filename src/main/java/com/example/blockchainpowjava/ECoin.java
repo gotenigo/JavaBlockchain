@@ -77,7 +77,7 @@ public class ECoin extends Application {
             resultSet.close();
             walletStatment.close();
             walletConnection.close();
-            WalletData.getInstance().loadWallet();
+            WalletData.getInstance().loadWallet();   //!!! Here we load the Wallet as Singleton Object
 
 //          This will create the db tables with columns for the Blockchain.
             Connection blockchainConnection = DriverManager

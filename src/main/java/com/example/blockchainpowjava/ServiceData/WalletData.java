@@ -15,7 +15,10 @@ import java.sql.*;
 /***********************************************************************
  *
  *  This class is used to store our wallet while our application is running
- *   and make it available to every other  part of our application
+ *   and make it available to every other  part of our application.
+ *
+ *   Because we want the same wallet to be available  throughout the application ,
+ *   we will create a singleton class. So no duplicate wallet here :-)
  *
  *
  *****************************************************************/
