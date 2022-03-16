@@ -137,6 +137,12 @@ public class BlockchainData {
     }
 
 
+    /******
+     *
+     * Simply   add a transaction into our current transaction ledger and sort it
+     *
+     * @param transaction
+     */
     public void addTransactionState(Transaction transaction) {
         newBlockTransactions.add(transaction);
         newBlockTransactions.sort(transactionComparator);
@@ -174,6 +180,10 @@ public class BlockchainData {
         }
 
     }
+
+
+
+
 
     public void loadBlockChain() {
         try {
