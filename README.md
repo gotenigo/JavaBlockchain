@@ -1,5 +1,6 @@
 # BlockChain Implementation with Java.
 In this project, we will demonstrate the power of the Blockchain by implementing simple decentralized  Blockchain in Java.
+The consensus Algorithm used here will be a variant of Pow (Proof Of Work).
 
 
 ## What Is A Blockchain ?
@@ -10,6 +11,14 @@ As a database, a blockchain stores information electronically in digital format.
 
 ![img_1.png](img_1.png)
 
+
+## What Is Pow (Proof Of Work) ?
+In simple term, it's a Hash that provides the proof the transaction is valid. It's  cryptographic proof in which 
+one party (the prover) proves to others (the verifiers) that a certain amount of a specific computational effort 
+has been expended. Verifiers can subsequently confirm this expenditure with minimal effort on their part. 
+The concept was invented by Cynthia Dwork and Moni Naor in 1993 as a way to deter denial-of-service attacks and 
+other service abuses such as spam on a network by requiring some work from a service requester, usually meaning 
+processing time by a computer.
 
 
 ## Mining a Block
