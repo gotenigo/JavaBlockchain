@@ -506,9 +506,15 @@ public class BlockchainData {
 
             return getCurrentBlockChain();
         }
-        return null;
+        return null; // both are old   ,  the received one is newer or both are up-to-date
     }
 
+
+    /****************************************
+     *
+     * @param receivedBC
+     * @return
+     ******************************************/
     private LinkedList<Block> checkWhichIsCreatedFirst(LinkedList<Block> receivedBC) {
         //Compare timestamps to see which one is created first.
         long initRcvBlockTime = LocalDateTime.parse(receivedBC.getFirst().getTimeStamp())
@@ -528,6 +534,14 @@ public class BlockchainData {
         return null;
     }
 
+
+    /********************************************
+     *
+     *
+     * @param receivedBC
+     * @return
+     * @throws GeneralSecurityException
+     *****************************************************/
     private LinkedList<Block> compareMiningPointsAndLuck(LinkedList<Block> receivedBC)
             throws GeneralSecurityException {
         //check if both blockchains have the same prevHashes to confirm they are both
@@ -573,6 +587,11 @@ public class BlockchainData {
         }
         return null;
     }
+
+
+
+
+
 
     public LinkedList<Block> getCurrentBlockChain() {
         return currentBlockChain;
