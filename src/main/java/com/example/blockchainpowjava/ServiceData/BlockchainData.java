@@ -153,7 +153,7 @@ public class BlockchainData {
 
     /**********************************
      *
-     *  Add a new Transaction into our Ledger
+     *  Add a new Transaction into Database
      *
      * @param transaction   Transaction Object
      * @param blockReward boolean -  its ita reward Transaction for the miner ? Or is it regular Transaction
@@ -214,7 +214,7 @@ public class BlockchainData {
                         resultSet.getInt("BLOCK_ID"),
                         resultSet.getInt("MINING_POINTS"),
                         resultSet.getDouble("LUCK"),
-                        loadtransactionList(resultSet.getInt("BLOCK_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionList with the blockId
+                        loadTransactionList(resultSet.getInt("BLOCK_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionList with the blockId
                                                                     // the List of Transaction is in the Table Transaction
                                                                         //" SELECT  * FROM TRANSACTIONS WHERE BLOCK_ID = ?"
                                                                             // So we pull from the database all transaction belonging to the same Block (BLOCK_ID)
@@ -254,7 +254,7 @@ public class BlockchainData {
      * @return
      * @throws SQLException
      *****************************************/
-    private ArrayList<Transaction> loadtransactionList(Integer blockId) throws SQLException {
+    private ArrayList<Transaction> loadTransactionList(Integer blockId) throws SQLException {
         ArrayList<Transaction> transactions = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(Config.getInstance().getDB_BLOCKCHAIN_URL());
@@ -315,7 +315,7 @@ public class BlockchainData {
 
         // 1.Create Block
         latestBlock = new Block(BlockchainData.getInstance().currentBlockChain); // we prepare/finalize the latest Block
-        latestBlock.setTransactionList(new ArrayList<>(newTransactionList)); // Lets go, we add the Transaction 
+        latestBlock.setTransactionList(new ArrayList<>(newTransactionList)); // Lets go, we add the Transaction . ( Here the Transaction reward is already included as it was the 1st transaction within the list of Transaction)
         latestBlock.setTimeStamp(LocalDateTime.now().toString());   // we set the timestamp to the current time
         latestBlock.setMinedBy(minersWallet.getPublicKey().getEncoded()); // we set our own wallet address since we are  trying to mine this Block
         latestBlock.setMiningPoints(miningPoints); // we set the current mining point we have accumulated
@@ -328,13 +328,13 @@ public class BlockchainData {
         miningPoints = 0; // we reset our mining point to 0
 
         // 3. Reward transaction
-        latestBlock.getTransactionList().sort(transactionComparator);
+        latestBlock.getTransactionList().sort(transactionComparator); // we sort them in asc to make sure we pick up the 1st Transaction (which is the BlockReward transaction)
 
-        addTransaction(latestBlock.getTransactionList().get(0), true); // we add the reward transaction of the  Block we have just finalized to the Database.
+        addTransaction(latestBlock.getTransactionList().get(0), true); // add to the Database :  we add the reward transaction of the  Block we have just finalized to the Database.
                                                                     // Until now, we kept it in newTransactionList list (ObservableList<Transaction>), which
                                                                     // we copied in our latestBlock
 
-        Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create biw  a bew reward transaction
+        Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create new  Block reward. So we created a new Transaction of value x (100 here) to be added in the Transaction list
                 100, latestBlock.getblockId() + 1, signing);
         newTransactionList.clear(); // newTransactionList contains now an old transaction  of the block we have finalized. So we clear newTransactionList out
         newTransactionList.add(transaction); // !!! newTransactionList is now loaded with the next reward transaction for the next mining cycle
