@@ -74,11 +74,11 @@ public class ECoin extends Application {
                     ") "
             );
             ResultSet resultSet = walletStatment.executeQuery(" SELECT * FROM WALLET ");
-            if (!resultSet.next()) {
-                Wallet newWallet = new Wallet();
+            if (!resultSet.next()) { // !!! If database does not have any result, then we create a new Wallet
+                Wallet newWallet = new Wallet(); // !!!!! new Wallet created
                 byte[] pubBlob = newWallet.getPublicKey().getEncoded();
                 byte[] prvBlob = newWallet.getPrivateKey().getEncoded();
-                PreparedStatement pstmt = walletConnection
+                PreparedStatement pstmt = walletConnection // !! we then save the new Wallet key pair, freshly generated, into the database
                         .prepareStatement("INSERT INTO WALLET(PRIVATE_KEY, PUBLIC_KEY) " +
                         " VALUES (?,?) ");
                 pstmt.setBytes(1, prvBlob);
@@ -88,7 +88,8 @@ public class ECoin extends Application {
             resultSet.close();
             walletStatment.close();
             walletConnection.close();
-            WalletData.getInstance().loadWallet();   //!!! Here we load the Wallet as Singleton Object
+
+            WalletData.getInstance().loadWallet();   //!!! We load the Wallet from the Database //  Here we load the Wallet as Singleton Object
 
 //          This will create the db tables with columns for the Blockchain.
             Connection blockchainConnection = DriverManager
@@ -108,7 +109,7 @@ public class ECoin extends Application {
             );
             ResultSet resultSetBlockchain = blockchainStmt.executeQuery(" SELECT * FROM BLOCKCHAIN ");
             Transaction initBlockRewardTransaction = null;
-            if (!resultSetBlockchain.next()) {
+            if (!resultSetBlockchain.next()) {    // !!!  if there isnt any Existing Blockchain (as per the SELECT Query) , then we create a new Block
 
                 Block firstBlock = new Block();
                 firstBlock.setMinedBy(WalletData.getInstance().getWallet().getPublicKey().getEncoded()); // set the Block with our  public key

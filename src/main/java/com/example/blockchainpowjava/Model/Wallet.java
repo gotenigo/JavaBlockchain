@@ -18,7 +18,7 @@ public class Wallet implements Serializable {
 
 
     public Wallet(Integer keySize, KeyPairGenerator keyPairGen) {
-       keyPairGen.initialize(keySize);
+       keyPairGen.initialize(keySize);   // we generate a new key Pair
        this.keyPair = keyPairGen.generateKeyPair();
     }
 

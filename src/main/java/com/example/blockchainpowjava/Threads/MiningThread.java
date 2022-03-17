@@ -46,7 +46,7 @@ public class MiningThread extends Thread {
                 log.info("MINING NEW BLOCK"); //  Create a new Block.we are between 60s - 65s time windows where a new Block needs to be created. So it's time to create a new Block
                     BlockchainData.getInstance().mineBlock();   // !!!! uses BlockchainData to Mine a new Block !!!!!
 
-                    log.info(BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
+                    log.info("The Wallet balance is now ="+BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
             }
 
             log.info(String.valueOf(LocalDateTime.parse(BlockchainData.getInstance()   // we print the time of our last mined Block
