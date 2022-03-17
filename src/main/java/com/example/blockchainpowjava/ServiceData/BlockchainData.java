@@ -225,7 +225,7 @@ public class BlockchainData {
 
             Transaction transaction = new Transaction(new Wallet(),  // we create a new reward Transaction. This is reward Transaction for our future Block
                     WalletData.getInstance().getWallet().getPublicKey().getEncoded(),
-                    100, latestBlock.getLedgerId() + 1, signing);
+                    100 /*reward*/ , latestBlock.getLedgerId() + 1, signing);
 
             newBlockTransactions.clear();    // Remember !!! ObservableList<Transaction> newBlockTransactions
             newBlockTransactions.add(transaction);
