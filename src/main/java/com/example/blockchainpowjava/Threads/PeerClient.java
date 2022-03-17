@@ -62,7 +62,7 @@ public class PeerClient extends Thread {
                 LinkedList<Block> returnedBlockchain = (LinkedList<Block>) objectInput.readObject(); // Read the Blockchain from port (the blockchain send by other Miner on the Network)
 
                 log.info(" RETURNED BC LedgerId = " + returnedBlockchain.getLast().getLedgerId()  +
-                        " Size= " + returnedBlockchain.getLast().getTransactionLedger().size());
+                        " Size= " + returnedBlockchain.getLast().getTransactionList().size());
 
                 BlockchainData.getInstance().getBlockchainConsensus(returnedBlockchain); // we check the Blockchain is valid
                 Thread.sleep(2000);

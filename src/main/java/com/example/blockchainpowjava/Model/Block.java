@@ -26,20 +26,20 @@ public class Block implements Serializable {
     private Double luck = 0.0;
 
     // this is simpy an ArrayList of all transaction containing in this Block
-    private ArrayList<Transaction> transactionLedger = new ArrayList<>(); //The actual data, any information having value, like a contract , Transaction
+    private ArrayList<Transaction> transactionList = new ArrayList<>(); //The actual data, any information having value, like a contract , Transaction
 
 
     //This constructor is used when we retrieve it from the db
     // Here we retrieve all the blocks completely finalized
     //this constructor helps us to instantiate the block with all the fields properly
     public Block(byte[] prevHash, byte[] currHash, String timeStamp, byte[] minedBy,Integer ledgerId,
-                 Integer miningPoints, Double luck, ArrayList<Transaction> transactionLedger) {
+                 Integer miningPoints, Double luck, ArrayList<Transaction> transactionList) {
         this.prevHash = prevHash;
         this.currHash = currHash;
         this.timeStamp = timeStamp;
         this.minedBy = minedBy;
         this.ledgerId = ledgerId;
-        this.transactionLedger = transactionLedger;
+        this.transactionList = transactionList;
         this.miningPoints = miningPoints;
         this.luck = luck;
     }
@@ -104,9 +104,9 @@ public class Block implements Serializable {
     public void setPrevHash(byte[] prevHash) { this.prevHash = prevHash; }
     public void setCurrHash(byte[] currHash) { this.currHash = currHash; }
 
-    public ArrayList<Transaction> getTransactionLedger() { return transactionLedger; }
-    public void setTransactionLedger(ArrayList<Transaction> transactionLedger) {
-        this.transactionLedger = transactionLedger;
+    public ArrayList<Transaction> getTransactionList() { return transactionList; }
+    public void setTransactionList(ArrayList<Transaction> transactionList) {
+        this.transactionList = transactionList;
     }
 
 

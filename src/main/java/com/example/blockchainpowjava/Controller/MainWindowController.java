@@ -53,7 +53,7 @@ public class MainWindowController {
                 new PropertyValueFactory<>("timestamp"));
         eCoins.setText(BlockchainData.getInstance().getWalletBallanceFX());
         publicKey.setText(encoder.encodeToString(WalletData.getInstance().getWallet().getPublicKey().getEncoded()));
-        tableview.setItems(BlockchainData.getInstance().getTransactionLedgerFX());
+        tableview.setItems(BlockchainData.getInstance().getTransactionListFX());
         tableview.getSelectionModel().select(0);
     }
 
@@ -73,14 +73,14 @@ public class MainWindowController {
         newTransactionController.getDialogPane().getButtonTypes().add(ButtonType.FINISH);
         Optional<ButtonType> result = newTransactionController.showAndWait();
         if (result.isPresent() ) {
-            tableview.setItems(BlockchainData.getInstance().getTransactionLedgerFX());
+            tableview.setItems(BlockchainData.getInstance().getTransactionListFX());
             eCoins.setText(BlockchainData.getInstance().getWalletBallanceFX());
         }
     }
 
     @FXML
     public void refresh() {
-        tableview.setItems(BlockchainData.getInstance().getTransactionLedgerFX());
+        tableview.setItems(BlockchainData.getInstance().getTransactionListFX());
         tableview.getSelectionModel().select(0);
         eCoins.setText(BlockchainData.getInstance().getWalletBallanceFX());
     }

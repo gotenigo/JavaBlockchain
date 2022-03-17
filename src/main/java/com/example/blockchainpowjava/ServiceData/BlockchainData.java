@@ -68,7 +68,7 @@ public class BlockchainData {
     Comparator<Transaction> transactionComparator = Comparator.comparing(Transaction::getTimestamp); // comparator used to  sort Transaction at time of creation
 
 
-    public ObservableList<Transaction> getTransactionLedgerFX() {  // display the current Transaction ledger
+    public ObservableList<Transaction> getTransactionListFX() {  // display the current Transaction ledger
         newBlockTransactionsFX.clear();                         // transfer the transaction from the current ledger to an ObservableList that we can display to UI
         newBlockTransactions.sort(transactionComparator);
         newBlockTransactionsFX.addAll(newBlockTransactions);
@@ -95,7 +95,7 @@ public class BlockchainData {
                                ObservableList<Transaction> currentLedger, PublicKey walletAddress) {
         Integer balance = 0;
         for (Block block : blockChain) { // we got through each Block of the Blockchain.
-            for (Transaction transaction : block.getTransactionLedger()) {
+            for (Transaction transaction : block.getTransactionList()) {
                 if (Arrays.equals(transaction.getFrom(), walletAddress.getEncoded())) { // check if we are sending fund
                     balance -= transaction.getValue();             // if so, we debit the balance
                 }
@@ -127,7 +127,7 @@ public class BlockchainData {
                 throw new GeneralSecurityException("Block validation failed");
             }
 
-            ArrayList<Transaction> transactionList = block.getTransactionLedger();  // then go through the Transaction of the particular Block
+            ArrayList<Transaction> transactionList = block.getTransactionList();  // then go through the Transaction of the particular Block
             for (Transaction transaction : transactionList) {
                 if (!transaction.isVerified(signing)) {
                     throw new GeneralSecurityException("Transaction validation failed");
@@ -214,7 +214,7 @@ public class BlockchainData {
                         resultSet.getInt("LEDGER_ID"),
                         resultSet.getInt("MINING_POINTS"),
                         resultSet.getDouble("LUCK"),
-                        loadTransactionLedger(resultSet.getInt("LEDGER_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionLedger with the ledgerID
+                        loadtransactionList(resultSet.getInt("LEDGER_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionList with the ledgerID
                                                                     // the List of Transaction is in the Table Transaction
                                                                         //" SELECT  * FROM TRANSACTIONS WHERE LEDGER_ID = ?"
                                                                             // So we pull from the database all transaction belonging to the same Block (LEDGER_ID)
@@ -254,7 +254,7 @@ public class BlockchainData {
      * @return
      * @throws SQLException
      *****************************************/
-    private ArrayList<Transaction> loadTransactionLedger(Integer ledgerID) throws SQLException {
+    private ArrayList<Transaction> loadtransactionList(Integer ledgerID) throws SQLException {
         ArrayList<Transaction> transactions = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(Config.getInstance().getDB_BLOCKCHAIN_URL());
@@ -314,7 +314,7 @@ public class BlockchainData {
     private void finalizeBlock(Wallet minersWallet) throws GeneralSecurityException, SQLException {
 
         latestBlock = new Block(BlockchainData.getInstance().currentBlockChain); // we prepare/finalize the latest Block
-        latestBlock.setTransactionLedger(new ArrayList<>(newBlockTransactions));
+        latestBlock.setTransactionList(new ArrayList<>(newBlockTransactions));
         latestBlock.setTimeStamp(LocalDateTime.now().toString());   // we set the timestamp to the current time
         latestBlock.setMinedBy(minersWallet.getPublicKey().getEncoded()); // we set our own wallet address since we are  trying to mine this Block
         latestBlock.setMiningPoints(miningPoints); // we set the current mining point we have accumulated
@@ -326,9 +326,9 @@ public class BlockchainData {
         currentBlockChain.add(latestBlock);
         miningPoints = 0; // we reset our mining point to 0
         //Reward transaction
-        latestBlock.getTransactionLedger().sort(transactionComparator);
+        latestBlock.getTransactionList().sort(transactionComparator);
 
-        addTransaction(latestBlock.getTransactionLedger().get(0), true); // we add the reward transaction of the  Block we have just finalized to the Database.
+        addTransaction(latestBlock.getTransactionList().get(0), true); // we add the reward transaction of the  Block we have just finalized to the Database.
                                                                     // Until now, we kept it in newBlockTransactions list (ObservableList<Transaction>), which
                                                                     // we copied in our latestBlock
 
@@ -384,8 +384,8 @@ public class BlockchainData {
                 addBlock(block);             //  !!! we add the  Block into the database
 
                 boolean rewardTransaction = true;
-                block.getTransactionLedger().sort(transactionComparator);
-                for (Transaction transaction : block.getTransactionLedger()) {
+                block.getTransactionList().sort(transactionComparator);
+                for (Transaction transaction : block.getTransactionList()) {
 
                     //"INSERT INTO TRANSACTIONS" + "(\"FROM\", \"TO\", LEDGER_ID, VALUE, SIGNATURE, CREATED_ON) " +" VALUES (?,?,?,?,?,?) ");
                     addTransaction(transaction, rewardTransaction);  // !!! We add the reward transaction into the database   //
@@ -442,9 +442,9 @@ public class BlockchainData {
                 }
              // if both blockchain have the same last Block ( both Hash are the same )
              // if only the transaction ledgers are different then combine them.
-            } else if (!receivedBC.getLast().getTransactionLedger().equals(getCurrentBlockChain() // Here we compare the Transaction ledger
-                    .getLast().getTransactionLedger())) {
-                updateTransactionLedgers(receivedBC);   // we merge both transaction
+            } else if (!receivedBC.getLast().getTransactionList().equals(getCurrentBlockChain() // Here we compare the Transaction ledger
+                    .getLast().getTransactionList())) {
+                updatetransactionLists(receivedBC);   // we merge both transaction
                 log.info("Transaction ledgers updated");
                 return receivedBC;
             } else {
@@ -460,21 +460,21 @@ public class BlockchainData {
 
 
 
-    private void updateTransactionLedgers(LinkedList<Block> receivedBC) throws GeneralSecurityException {
-        for (Transaction transaction : receivedBC.getLast().getTransactionLedger()) {
-            if (!getCurrentBlockChain().getLast().getTransactionLedger().contains(transaction) ) {
-                getCurrentBlockChain().getLast().getTransactionLedger().add(transaction);
+    private void updatetransactionLists(LinkedList<Block> receivedBC) throws GeneralSecurityException {
+        for (Transaction transaction : receivedBC.getLast().getTransactionList()) {
+            if (!getCurrentBlockChain().getLast().getTransactionList().contains(transaction) ) {
+                getCurrentBlockChain().getLast().getTransactionList().add(transaction);
                 log.info("current ledger id = " + getCurrentBlockChain().getLast().getLedgerId() + " transaction id = " + transaction.getLedgerId());
                 addTransaction(transaction, false);
             }
         }
-        getCurrentBlockChain().getLast().getTransactionLedger().sort(transactionComparator);
-        for (Transaction transaction : getCurrentBlockChain().getLast().getTransactionLedger()) {
-            if (!receivedBC.getLast().getTransactionLedger().contains(transaction) ) {
-                receivedBC.getLast().getTransactionLedger().add(transaction);
+        getCurrentBlockChain().getLast().getTransactionList().sort(transactionComparator);
+        for (Transaction transaction : getCurrentBlockChain().getLast().getTransactionList()) {
+            if (!receivedBC.getLast().getTransactionList().contains(transaction) ) {
+                receivedBC.getLast().getTransactionList().add(transaction);
             }
         }
-        receivedBC.getLast().getTransactionLedger().sort(transactionComparator);
+        receivedBC.getLast().getTransactionList().sort(transactionComparator);
     }
 
 
@@ -559,13 +559,13 @@ public class BlockchainData {
                     receivedBC.getLast().getLuck() > getCurrentBlockChain().getLast().getLuck()) {
                 //remove the reward transaction from our losing block and
                 // transfer the transactions to the winning block
-                getCurrentBlockChain().getLast().getTransactionLedger().remove(0);
-                for (Transaction transaction : getCurrentBlockChain().getLast().getTransactionLedger()) {
-                    if (!receivedBC.getLast().getTransactionLedger().contains(transaction)) {
-                        receivedBC.getLast().getTransactionLedger().add(transaction);
+                getCurrentBlockChain().getLast().getTransactionList().remove(0);
+                for (Transaction transaction : getCurrentBlockChain().getLast().getTransactionList()) {
+                    if (!receivedBC.getLast().getTransactionList().contains(transaction)) {
+                        receivedBC.getLast().getTransactionList().add(transaction);
                     }
                 }
-                receivedBC.getLast().getTransactionLedger().sort(transactionComparator);
+                receivedBC.getLast().getTransactionList().sort(transactionComparator);
                 //we are returning the mining points since our local block lost.
                 setMiningPoints(BlockchainData.getInstance().getMiningPoints() +
                         getCurrentBlockChain().getLast().getMiningPoints());
@@ -576,14 +576,14 @@ public class BlockchainData {
             } else {
                 // remove the reward transaction from their losing block and transfer
                 // the transactions to our winning block
-                receivedBC.getLast().getTransactionLedger().remove(0);
-                for (Transaction transaction : receivedBC.getLast().getTransactionLedger()) {
-                    if (!getCurrentBlockChain().getLast().getTransactionLedger().contains(transaction)) {
-                        getCurrentBlockChain().getLast().getTransactionLedger().add(transaction);
+                receivedBC.getLast().getTransactionList().remove(0);
+                for (Transaction transaction : receivedBC.getLast().getTransactionList()) {
+                    if (!getCurrentBlockChain().getLast().getTransactionList().contains(transaction)) {
+                        getCurrentBlockChain().getLast().getTransactionList().add(transaction);
                         addTransaction(transaction, false);
                     }
                 }
-                getCurrentBlockChain().getLast().getTransactionLedger().sort(transactionComparator);
+                getCurrentBlockChain().getLast().getTransactionList().sort(transactionComparator);
                 return getCurrentBlockChain();
             }
         }
