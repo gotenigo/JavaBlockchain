@@ -12,9 +12,9 @@ It belongs to a network of nodes connected over the public/private network
 As a database, a blockchain stores information electronically in digital format.
 
 ### What does it mean from Java point of view ? 
-Blockchain = List<Block>
+Blockchain = List< Block >
 where
-Block  = List<Transaction> 
+Block  = List < Transaction > 
 
 :-)
 
