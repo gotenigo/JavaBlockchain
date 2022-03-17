@@ -38,9 +38,9 @@ public class MiningThread extends Thread {
                     .getCurrentBlockChain().getLast().getTimeStamp()).toEpochSecond(ZoneOffset.UTC);
 
                                                                                                                                     // A Block is being produced every x seconds (it's a continuous real time  process), so any Blockchain that was made in the last  x second is too old.
-            if ((timeOfLastMinedBlock + BlockchainData.getTimeoutInterval()) < LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {  //  BlockchainData.getTimeoutInterval() is set to 65s. So anything above that will be considered too old. This is time out is set under BlockchainData
+            if ((timeOfLastMinedBlock + BlockchainData.getTimeoutInterval()) < LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {  // TIMEOUT_INTERVAL = 65;  //  BlockchainData.getTimeoutInterval() is set to 65s. So anything above that will be considered too old. This is time out is set under BlockchainData
                 log.info("BlockChain is too old for mining! Update it from peers"); // no point to mine anything until we get new version
-            } else if ( ((timeOfLastMinedBlock + BlockchainData.getMiningInterval()) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) > 0 ) {  // check if less than 60s has passed since the last mined Block.
+            } else if ( ((timeOfLastMinedBlock + BlockchainData.getMiningInterval()) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) > 0 ) {  // MINING_INTERVAL = 60;  // check if less than 60s has passed since the last mined Block.
                 log.info("BlockChain is current, mining will commence in " +     // if so then we print the remaining time (until 60s timeframe)
                         ((timeOfLastMinedBlock + BlockchainData.getMiningInterval()) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) ) + " seconds");
             } else {
