@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+
+// !!! Block  = List<Transaction> !!!
 //Represent a single Block of the Blockchain
 public class Block implements Serializable {
 
