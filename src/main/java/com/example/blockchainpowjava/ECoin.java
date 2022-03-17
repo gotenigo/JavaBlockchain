@@ -109,14 +109,18 @@ public class ECoin extends Application {
             ResultSet resultSetBlockchain = blockchainStmt.executeQuery(" SELECT * FROM BLOCKCHAIN ");
             Transaction initBlockRewardTransaction = null;
             if (!resultSetBlockchain.next()) {
+
                 Block firstBlock = new Block();
-                firstBlock.setMinedBy(WalletData.getInstance().getWallet().getPublicKey().getEncoded());
-                firstBlock.setTimeStamp(LocalDateTime.now().toString());
+                firstBlock.setMinedBy(WalletData.getInstance().getWallet().getPublicKey().getEncoded()); // set the Block with our  public key
+                firstBlock.setTimeStamp(LocalDateTime.now().toString());  // set the current TimeStamp
+
                 //helper class.
                 Signature signing = Signature.getInstance("SHA256withDSA");
                 signing.initSign(WalletData.getInstance().getWallet().getPrivateKey());
                 signing.update(firstBlock.toString().getBytes());
-                firstBlock.setCurrHash(signing.sign());
+                firstBlock.setCurrHash(signing.sign());  // we sign the Block under field  "CurrHash"
+
+
                 PreparedStatement pstmt = blockchainConnection
                         .prepareStatement("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH , LEDGER_ID," +
                                 " CREATED_ON, CREATED_BY,MINING_POINTS,LUCK ) " +
@@ -128,7 +132,8 @@ public class ECoin extends Application {
                 pstmt.setBytes(5, WalletData.getInstance().getWallet().getPublicKey().getEncoded());
                 pstmt.setInt(6, firstBlock.getMiningPoints());
                 pstmt.setDouble(7, firstBlock.getLuck());
-                pstmt.executeUpdate();
+                pstmt.executeUpdate(); // execute the SQL statement
+
                 Signature transSignature = Signature.getInstance("SHA256withDSA");
                 initBlockRewardTransaction = new Transaction(WalletData.getInstance().getWallet(),WalletData.getInstance().getWallet().getPublicKey().getEncoded(),100,1,transSignature);
             }
