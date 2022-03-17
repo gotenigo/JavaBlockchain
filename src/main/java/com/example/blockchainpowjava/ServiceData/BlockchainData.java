@@ -196,6 +196,7 @@ public class BlockchainData {
      *    loadBlockChain()  ::  this method is used whenever we want to load the entire Blockchain
      *    from the database. For example, if we want to re-set the state of the app, then we will use that method
      *
+     *   Logic : Read all the Block from the database (table Blockchain), then iterate and add each Block into the in-memory Blockchain (LinkedList<Block>)
      *
      ***************************************************************/
     public void loadBlockChain() {
@@ -204,6 +205,7 @@ public class BlockchainData {
             Statement stmt = connection.createStatement();
             ResultSet resultSet = stmt.executeQuery(" SELECT * FROM BLOCKCHAIN ");
             while (resultSet.next()) {
+                // we add each Block into the Blockchain (LinkedList<Block>) => currentBlockChain
                 this.currentBlockChain.add(new Block(        // each Block holds a List<Transaction> . And Each Transaction comes under an Id called ledgerID (Integer)
                         resultSet.getBytes("PREVIOUS_HASH"),
                         resultSet.getBytes("CURRENT_HASH"),
@@ -212,7 +214,10 @@ public class BlockchainData {
                         resultSet.getInt("LEDGER_ID"),
                         resultSet.getInt("MINING_POINTS"),
                         resultSet.getDouble("LUCK"),
-                        loadTransactionLedger(resultSet.getInt("LEDGER_ID"))  //   resolve the  ArrayList<Transaction> transactionLedger with the ledgerID
+                        loadTransactionLedger(resultSet.getInt("LEDGER_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionLedger with the ledgerID
+                                                                    // the List of Transaction is in the Table Transaction
+                                                                        //" SELECT  * FROM TRANSACTIONS WHERE LEDGER_ID = ?"
+                                                                            // So we pull from the database all transaction belonging to the same Block (LEDGER_ID)
                 ));
             }
 
