@@ -329,12 +329,11 @@ public class BlockchainData {
 
         // 3. Reward transaction
         latestBlock.getTransactionList().sort(transactionComparator); // we sort them in asc to make sure we pick up the 1st Transaction (which is the BlockReward transaction)
-
         addTransaction(latestBlock.getTransactionList().get(0), true); // add to the Database :  we add the reward transaction of the  Block we have just finalized to the Database.
                                                                     // Until now, we kept it in newTransactionList list (ObservableList<Transaction>), which
                                                                     // we copied in our latestBlock
 
-        Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create new  Block reward. So we created a new Transaction of value x (100 here) to be added in the Transaction list
+        Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create a new  Block reward for the next mining cycle. it will be the 1st Transaction of the Block. So we created a new Transaction of value x (100 here) to be added in the Transaction list
                 100, latestBlock.getblockId() + 1, signing);
         newTransactionList.clear(); // newTransactionList contains now an old transaction  of the block we have finalized. So we clear newTransactionList out
         newTransactionList.add(transaction); // !!! newTransactionList is now loaded with the next reward transaction for the next mining cycle
