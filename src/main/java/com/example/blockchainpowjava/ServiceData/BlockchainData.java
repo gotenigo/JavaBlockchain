@@ -92,7 +92,7 @@ public class BlockchainData {
     // but also it verifies if certain address has  enough coins before sending them
      *********************************************/
     private Integer getBalance(LinkedList<Block> blockChain,
-                               ObservableList<Transaction> currentLedger, PublicKey walletAddress) {
+                               ObservableList<Transaction> currentTransactionList, PublicKey walletAddress) {
         Integer balance = 0;
         for (Block block : blockChain) { // we got through each Block of the Blockchain.
             for (Transaction transaction : block.getTransactionList()) {
@@ -104,7 +104,7 @@ public class BlockchainData {
                 }
             }
         }
-        for (Transaction transaction : currentLedger) { // to prevent double spending, we also need to subtract
+        for (Transaction transaction : currentTransactionList) { // to prevent double spending, we also need to subtract
             if (Arrays.equals(transaction.getFrom(), walletAddress.getEncoded())) { //any fund we are already trying to send
                 balance -= transaction.getValue();                               // that exist in the current transaction ledger
             }     // !! remember, double spending is a situation where user sends total fund 2 times. So effectively creating fund out of thin air
