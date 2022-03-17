@@ -31,8 +31,8 @@ import java.util.LinkedList;
 @Slf4j
 public class BlockchainData {
                                                         //ObservableList is a list that allows listeners to track changes when they occur.
-    private ObservableList<Transaction> newBlockTransactionsFX;  // We define a Transaction as a ObservableList (FXCollections - javafx.collections ) . ObservableList adds a way to listen for changes on a list
-    private ObservableList<Transaction> newBlockTransactions;  // The List will hold the transaction of the Blockchain. it represents the current ledger of our Blockchain
+    private ObservableList<Transaction> newTransactionListFX;  // We define a Transaction as a ObservableList (FXCollections - javafx.collections ) . ObservableList adds a way to listen for changes on a list
+    private ObservableList<Transaction> newTransactionList;  // The List will hold the transaction of the Blockchain. it represents the current ledger of our Blockchain
 
     private LinkedList<Block> currentBlockChain = new LinkedList<>(); // This is our current Blockchain. It' s a LinkedList<Block>
 
@@ -57,8 +57,8 @@ public class BlockchainData {
     }
 
     public BlockchainData() throws NoSuchAlgorithmException {
-        newBlockTransactions = FXCollections.observableArrayList();
-        newBlockTransactionsFX = FXCollections.observableArrayList();
+        newTransactionList = FXCollections.observableArrayList();
+        newTransactionListFX = FXCollections.observableArrayList();
     }
 
     public static BlockchainData getInstance() {
@@ -69,10 +69,10 @@ public class BlockchainData {
 
 
     public ObservableList<Transaction> getTransactionListFX() {  // display the current Transaction ledger
-        newBlockTransactionsFX.clear();                         // transfer the transaction from the current ledger to an ObservableList that we can display to UI
-        newBlockTransactions.sort(transactionComparator);
-        newBlockTransactionsFX.addAll(newBlockTransactions);
-        return FXCollections.observableArrayList(newBlockTransactionsFX);
+        newTransactionListFX.clear();                         // transfer the transaction from the current ledger to an ObservableList that we can display to UI
+        newTransactionList.sort(transactionComparator);
+        newTransactionListFX.addAll(newTransactionList);
+        return FXCollections.observableArrayList(newTransactionListFX);
     }
 
 
@@ -82,7 +82,7 @@ public class BlockchainData {
      * @return
      *************/
     public String getWalletBallanceFX() {
-        return getBalance(currentBlockChain, newBlockTransactions,
+        return getBalance(currentBlockChain, newTransactionList,
                             WalletData.getInstance().getWallet().getPublicKey()).toString();
     }
 
@@ -146,8 +146,8 @@ public class BlockchainData {
      * @param transaction
      */
     public void addTransactionState(Transaction transaction) {
-        newBlockTransactions.add(transaction);
-        newBlockTransactions.sort(transactionComparator);
+        newTransactionList.add(transaction);
+        newTransactionList.sort(transactionComparator);
     }
 
 
@@ -162,7 +162,7 @@ public class BlockchainData {
      ****************************************************/
     public void addTransaction(Transaction transaction, boolean blockReward) throws GeneralSecurityException {
         try {
-            if (getBalance(currentBlockChain, newBlockTransactions,
+            if (getBalance(currentBlockChain, newTransactionList,
                     new DSAPublicKeyImpl(transaction.getFrom())) < transaction.getValue() && !blockReward) {
                 throw new GeneralSecurityException("Not enough funds by sender to record transaction");
             } else {
@@ -227,8 +227,8 @@ public class BlockchainData {
                     WalletData.getInstance().getWallet().getPublicKey().getEncoded(),
                     100 /*reward*/ , latestBlock.getblockId() + 1, signing);
 
-            newBlockTransactions.clear();    // Remember !!! ObservableList<Transaction> newBlockTransactions
-            newBlockTransactions.add(transaction);
+            newTransactionList.clear();    // Remember !!! ObservableList<Transaction> newTransactionList
+            newTransactionList.add(transaction);
             verifyBlockChain(currentBlockChain); //  we call Verify Blockchain method  on the current Blockchain we just loaded from the Database. This needed as we might import Blockchain from someone else Database
             resultSet.close();
             stmt.close();
@@ -313,29 +313,31 @@ public class BlockchainData {
      ***********************************/
     private void finalizeBlock(Wallet minersWallet) throws GeneralSecurityException, SQLException {
 
+        // 1.Create Block
         latestBlock = new Block(BlockchainData.getInstance().currentBlockChain); // we prepare/finalize the latest Block
-        latestBlock.setTransactionList(new ArrayList<>(newBlockTransactions));
+        latestBlock.setTransactionList(new ArrayList<>(newTransactionList)); // Lets go, we add the Transaction 
         latestBlock.setTimeStamp(LocalDateTime.now().toString());   // we set the timestamp to the current time
         latestBlock.setMinedBy(minersWallet.getPublicKey().getEncoded()); // we set our own wallet address since we are  trying to mine this Block
         latestBlock.setMiningPoints(miningPoints); // we set the current mining point we have accumulated
 
-
+        // 2. Sign the Block
         signing.initSign(minersWallet.getPrivateKey());
         signing.update(latestBlock.toString().getBytes());
         latestBlock.setCurrHash(signing.sign()); // we sign the Block
         currentBlockChain.add(latestBlock);
         miningPoints = 0; // we reset our mining point to 0
-        //Reward transaction
+
+        // 3. Reward transaction
         latestBlock.getTransactionList().sort(transactionComparator);
 
         addTransaction(latestBlock.getTransactionList().get(0), true); // we add the reward transaction of the  Block we have just finalized to the Database.
-                                                                    // Until now, we kept it in newBlockTransactions list (ObservableList<Transaction>), which
+                                                                    // Until now, we kept it in newTransactionList list (ObservableList<Transaction>), which
                                                                     // we copied in our latestBlock
 
         Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create biw  a bew reward transaction
                 100, latestBlock.getblockId() + 1, signing);
-        newBlockTransactions.clear(); // newBlockTransactions contains now an old transaction  of the block we have finalized. So we clear newBlockTransactions out
-        newBlockTransactions.add(transaction); // !!! newBlockTransactions is now loaded with the next reward transaction for the next mining cycle
+        newTransactionList.clear(); // newTransactionList contains now an old transaction  of the block we have finalized. So we clear newTransactionList out
+        newTransactionList.add(transaction); // !!! newTransactionList is now loaded with the next reward transaction for the next mining cycle
                                                 // This reward Transaction is what the miner gets for  successfully mining the next block
     }
 
