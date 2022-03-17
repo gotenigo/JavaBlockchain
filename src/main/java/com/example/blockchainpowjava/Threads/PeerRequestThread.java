@@ -3,6 +3,7 @@ package com.example.blockchainpowjava.Threads;
 
 import com.example.blockchainpowjava.Model.Block;
 import com.example.blockchainpowjava.ServiceData.BlockchainData;
+import lombok.extern.slf4j.Slf4j;
 import sun.security.provider.DSAPublicKeyImpl;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +17,7 @@ import java.util.LinkedList;
  *
  *
  *************************************/
+@Slf4j
 public class PeerRequestThread extends Thread {
 
     private Socket socket;
@@ -35,7 +37,7 @@ public class PeerRequestThread extends Thread {
 
             LinkedList<Block> recievedBC = (LinkedList<Block>) objectInput.readObject(); // read from the  InputStream. We should ge a LinkedList<Block>
 
-            System.out.println("LedgerId = " + recievedBC.getLast().getLedgerId()  +
+            log.info("LedgerId = " + recievedBC.getLast().getLedgerId()  +
                     " Size= " + recievedBC.getLast().getTransactionLedger().size());
 
             // The same service layer BlockchainData is used to validate the Blockchain

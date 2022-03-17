@@ -92,7 +92,7 @@ public class ECoin extends Application {
 
 //          This will create the db tables with columns for the Blockchain.
             Connection blockchainConnection = DriverManager
-                    .getConnection(config.getDB_WALLET_URL());
+                    .getConnection(config.getDB_BLOCKCHAIN_URL());
             Statement blockchainStmt = blockchainConnection.createStatement();
             blockchainStmt.executeUpdate("CREATE TABLE IF NOT EXISTS BLOCKCHAIN ( " +
                     " ID INTEGER NOT NULL UNIQUE, " +

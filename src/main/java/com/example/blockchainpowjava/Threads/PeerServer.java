@@ -1,6 +1,8 @@
 package com.example.blockchainpowjava.Threads;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -13,6 +15,7 @@ import java.net.ServerSocket;
  *Then we run PeerRequestThread Thread for each  incoming request
  *
  *******************************/
+@Slf4j
 public class PeerServer extends Thread {
 
     private ServerSocket serverSocket;

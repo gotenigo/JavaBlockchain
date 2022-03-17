@@ -3,6 +3,7 @@ package com.example.blockchainpowjava.Threads;
 
 
 import com.example.blockchainpowjava.ServiceData.BlockchainData;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -24,6 +25,8 @@ import java.time.ZoneOffset;
  so that I can explain the consensus algorithm better, hence you get this one you should be able to replace it with any other.
 
 **************************************/
+
+@Slf4j
 public class MiningThread extends Thread {
 
     @Override
@@ -35,19 +38,19 @@ public class MiningThread extends Thread {
                     .getCurrentBlockChain().getLast().getTimeStamp()).toEpochSecond(ZoneOffset.UTC);
 
             if ((lastMinedBlock + BlockchainData.getTimeoutInterval()) < LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {  //  BlockchainData.getTimeoutInterval() is set to 65s. So anything above that will be considered too old. This is time out is set under BlockchainData
-                System.out.println("BlockChain is too old for mining! Update it from peers"); // no point to mine anything until we get new version
+                log.info("BlockChain is too old for mining! Update it from peers"); // no point to mine anything until we get new version
             } else if ( ((lastMinedBlock + BlockchainData.getMiningInterval()) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) > 0 ) {  // check if less than 60s has passed since the last mined Block.
-                System.out.println("BlockChain is current, mining will commence in " +     // if so then we print the remaining time (until 60s timeframe)
+                log.info("BlockChain is current, mining will commence in " +     // if so then we print the remaining time (until 60s timeframe)
                         ((lastMinedBlock + BlockchainData.getMiningInterval()) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) ) + " seconds");
             } else {
-                System.out.println("MINING NEW BLOCK"); //  Create a new Block.we are between 60s - 65s time windows where a new Block needs to be created. So it's time to create a new Block
+                log.info("MINING NEW BLOCK"); //  Create a new Block.we are between 60s - 65s time windows where a new Block needs to be created. So it's time to create a new Block
                     BlockchainData.getInstance().mineBlock();   // !!!! uses BlockchainData to Mine a new Block !!!!!
 
-                    System.out.println(BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
+                    log.info(BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
             }
 
-            System.out.println(LocalDateTime.parse(BlockchainData.getInstance()   // we print the time of our last mined Block
-                    .getCurrentBlockChain().getLast().getTimeStamp()).toEpochSecond(ZoneOffset.UTC));
+            log.info(String.valueOf(LocalDateTime.parse(BlockchainData.getInstance()   // we print the time of our last mined Block
+                    .getCurrentBlockChain().getLast().getTimeStamp()).toEpochSecond(ZoneOffset.UTC)));
 
             try {
                 Thread.sleep(2000);

@@ -5,6 +5,7 @@ package com.example.blockchainpowjava.Threads;
 import com.example.blockchainpowjava.Model.Block;
 import com.example.blockchainpowjava.ServiceData.BlockchainData;
 import com.example.blockchainpowjava.configuration.Config;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -27,7 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  *
  ****************************************/
 
-
+@Slf4j
 public class PeerClient extends Thread {
 
     private Queue<Integer> queue = new ConcurrentLinkedQueue<>();
@@ -48,7 +49,7 @@ public class PeerClient extends Thread {
             try (Socket socket = new Socket("127.0.0.1", queue.peek())) {  // try-with-resources (introduced in Java 7)
                    // allows us to declare resources to be used in a try block with the assurance that the resources will be closed after the execution of that block.
 
-                System.out.println("Sending blockchain object on port: " + queue.peek());
+                log.info("Sending blockchain object on port: " + queue.peek());
                 queue.add(queue.poll()); // rotate the port order // so  we rotate at each iteration while(true)
                 socket.setSoTimeout(5000);
 
@@ -60,17 +61,17 @@ public class PeerClient extends Thread {
                                                                                                     // Object should be a LinkedList<Block>
                 LinkedList<Block> returnedBlockchain = (LinkedList<Block>) objectInput.readObject(); // Read the Blockchain from port (the blockchain send by other Miner on the Network)
 
-                System.out.println(" RETURNED BC LedgerId = " + returnedBlockchain.getLast().getLedgerId()  +
+                log.info(" RETURNED BC LedgerId = " + returnedBlockchain.getLast().getLedgerId()  +
                         " Size= " + returnedBlockchain.getLast().getTransactionLedger().size());
 
                 BlockchainData.getInstance().getBlockchainConsensus(returnedBlockchain); // we check the Blockchain is valid
                 Thread.sleep(2000);
 
             } catch (SocketTimeoutException e) {
-                System.out.println("The socket timed out");
+                log.info("The socket timed out");
                 queue.add(queue.poll()); // rotate the port and carry on with the next one
             } catch (IOException e) {
-                System.out.println("Client Error: " + e.getMessage() + " -- Error on port: "+ queue.peek());
+                log.info("Client Error: " + e.getMessage() + " -- Error on port: "+ queue.peek());
                 queue.add(queue.poll()); // rotate the port and carry on with the next one
             } catch (InterruptedException | ClassNotFoundException e) {
                 e.printStackTrace();
