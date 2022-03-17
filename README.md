@@ -13,7 +13,7 @@ As a database, a blockchain stores information electronically in digital format.
 
 ### What does it mean from Java point of view ? 
 Blockchain = List< Block >
-where
+**where**
 Block  = List < Transaction > 
 
 :-)
