@@ -11,11 +11,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Optional;
 
+@Slf4j
 public class MainWindowController {
 
     @FXML
@@ -64,7 +66,7 @@ public class MainWindowController {
         try {
             newTransactionController.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
-            System.out.println("Cant load dialog");
+            log.info("Cant load dialog");
             e.printStackTrace();
             return;
         }

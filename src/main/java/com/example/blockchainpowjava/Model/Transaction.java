@@ -1,5 +1,6 @@
 package com.example.blockchainpowjava.Model;
 
+import lombok.extern.slf4j.Slf4j;
 import sun.security.provider.DSAPublicKeyImpl;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.util.Base64;
 
 
 //Represent a Blockchain Transaction. one Block will have a List<Transaction>
+@Slf4j
 public class Transaction implements Serializable { // Needed to go through the Network
 
    private byte[] from; //public key (address) of the sender

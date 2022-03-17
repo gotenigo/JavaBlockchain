@@ -12,6 +12,7 @@ import com.example.blockchainpowjava.Threads.UI;
 import com.example.blockchainpowjava.configuration.Config;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.*;
 import java.sql.*;
@@ -32,7 +33,7 @@ import java.time.LocalDateTime;
 
 *****************************************/
 
-
+@Slf4j
 public class ECoin extends Application {
 
     private Config config;
@@ -159,7 +160,7 @@ public class ECoin extends Application {
             blockchainStmt.close();
             blockchainConnection.close();
         } catch (SQLException | NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            System.out.println("db failed: " + e.getMessage());
+            log.info("db failed: " + e.getMessage());
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }

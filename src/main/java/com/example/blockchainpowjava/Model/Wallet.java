@@ -31,4 +31,14 @@ public class Wallet implements Serializable {
 
     public PublicKey getPublicKey() { return keyPair.getPublic(); }
     public PrivateKey getPrivateKey() { return keyPair.getPrivate(); }
+
+
+    @Override
+    public String toString() {
+        return "Wallet{" +
+                "keyPair=" + keyPair +
+                '}';
+    }
+
+
 }

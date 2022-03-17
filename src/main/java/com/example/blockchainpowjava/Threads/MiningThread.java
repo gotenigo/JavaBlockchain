@@ -49,8 +49,8 @@ public class MiningThread extends Thread {
                     log.info("The Wallet balance is now ="+BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
             }
 
-            log.info(String.valueOf(LocalDateTime.parse(BlockchainData.getInstance()   // we print the time of our last mined Block
-                    .getCurrentBlockChain().getLast().getTimeStamp()).toEpochSecond(ZoneOffset.UTC)));
+            log.info("Time of the latest Block mined "+LocalDateTime.parse(BlockchainData.getInstance()   // we print the time of our last mined Block
+                    .getCurrentBlockChain().getLast().getTimeStamp()).toLocalTime());
 
             try {
                 Thread.sleep(2000);
