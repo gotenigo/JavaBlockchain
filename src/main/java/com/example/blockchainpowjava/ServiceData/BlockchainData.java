@@ -334,7 +334,7 @@ public class BlockchainData {
                                                                     // we copied in our latestBlock
 
         Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create a new  Block reward for the next mining cycle. it will be the 1st Transaction of the Block. So we created a new Transaction of value x (100 here) to be added in the Transaction list
-                100, latestBlock.getblockId() + 1, signing);
+                100, latestBlock.getblockId() + 1, signing); // the reward is set at 100
         newTransactionList.clear(); // newTransactionList contains now an old transaction  of the block we have finalized. So we clear newTransactionList out
         newTransactionList.add(transaction); // !!! newTransactionList is now loaded with the next reward transaction for the next mining cycle
                                                 // This reward Transaction is what the miner gets for  successfully mining the next block
