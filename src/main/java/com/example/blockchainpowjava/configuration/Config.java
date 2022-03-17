@@ -41,25 +41,25 @@ public final class Config {
         if (dbWalletPath != null){
             DB_WALLET_URL = "jdbc:sqlite:" + dbWalletPath;
         }else{
-            DB_WALLET_URL = "jdbc:sqlite:" + "G:\\demo\\BlockchainPowJava\\src\\main\\db\\wallet.db";
+            DB_WALLET_URL = "jdbc:sqlite:" + "G:\\demo\\BlockchainPowJava\\src\\main\\db\\wallet.db"; // default setup
         }
 
         if (dbBlockchainPath != null){
             DB_BLOCKCHAIN_URL = "jdbc:sqlite:" + dbBlockchainPath;
         }else{
-            DB_BLOCKCHAIN_URL = "jdbc:sqlite:" + "G:\\demo\\BlockchainPowJava\\src\\main\\db\\blockchain.db";
+            DB_BLOCKCHAIN_URL = "jdbc:sqlite:" + "G:\\demo\\BlockchainPowJava\\src\\main\\db\\blockchain.db"; // default setup
         }
 
         if (serverPort != null){
             SERVER_PORT = serverPort;
         }else{
-            SERVER_PORT = 6000;
+            SERVER_PORT = 6000; // default setup
         }
 
         if (serverPort != null){
             CLIENT_PORT_LIST = clientPortList;
         }else{
-            CLIENT_PORT_LIST = Arrays.asList(6001,6002);
+            CLIENT_PORT_LIST = Arrays.asList(6001,6002); // default setup
         }
 
     }
