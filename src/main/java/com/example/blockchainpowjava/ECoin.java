@@ -48,7 +48,7 @@ public class ECoin extends Application {
         new UI().start(primaryStage);
         new PeerClient().start();  // we start PeerClient Thread  to send nd receive Blockchain from other Node operator
         new PeerServer( config.getSERVER_PORT() ).start(); // we start PeerServer Thread to keep listening Network request from Node operator
-        new MiningThread().start();
+        new MiningThread().start(); // We need to keep on mining. So this Thread run all the time
 
     }
 
@@ -117,13 +117,13 @@ public class ECoin extends Application {
 
                 //helper class.
                 Signature signing = Signature.getInstance("SHA256withDSA");
-                signing.initSign(WalletData.getInstance().getWallet().getPrivateKey());
-                signing.update(firstBlock.toString().getBytes());
-                firstBlock.setCurrHash(signing.sign());  // we sign the Block under field  "CurrHash"
+                signing.initSign(WalletData.getInstance().getWallet().getPrivateKey()); // we sign the Block with our private key
+                signing.update(firstBlock.toString().getBytes());  // we provide the data we are looking to sign
+                firstBlock.setCurrHash(signing.sign());  // we update the Block object with the cryptographic signature ( update field field  "Block.CurrHash")
 
 
                 PreparedStatement pstmt = blockchainConnection
-                        .prepareStatement("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH , LEDGER_ID," +
+                        .prepareStatement("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH , LEDGER_ID," + // we save that Block into the database
                                 " CREATED_ON, CREATED_BY,MINING_POINTS,LUCK ) " +
                         " VALUES (?,?,?,?,?,?,?) ");
                 pstmt.setBytes(1, firstBlock.getPrevHash());
@@ -133,10 +133,11 @@ public class ECoin extends Application {
                 pstmt.setBytes(5, WalletData.getInstance().getWallet().getPublicKey().getEncoded());
                 pstmt.setInt(6, firstBlock.getMiningPoints());
                 pstmt.setDouble(7, firstBlock.getLuck());
-                pstmt.executeUpdate(); // execute the SQL statement
+                pstmt.executeUpdate(); // !!!! execute the SQL statement
 
-                Signature transSignature = Signature.getInstance("SHA256withDSA");
-                initBlockRewardTransaction = new Transaction(WalletData.getInstance().getWallet(),WalletData.getInstance().getWallet().getPublicKey().getEncoded(),100,1,transSignature);
+                Signature transSignature = Signature.getInstance("SHA256withDSA"); //!!! We prepare  the initial block reward transaction for our block.
+                initBlockRewardTransaction = new Transaction(WalletData.getInstance().getWallet(),      // we will insert it into the database later as we are not sure if it exists  in the database
+                        WalletData.getInstance().getWallet().getPublicKey().getEncoded(),100,1,transSignature);
             }
             resultSetBlockchain.close();
 
@@ -151,9 +152,9 @@ public class ECoin extends Application {
                     " PRIMARY KEY(ID AUTOINCREMENT) " +
                     ")"
             );
-            if (initBlockRewardTransaction != null) {
-                BlockchainData.getInstance().addTransaction(initBlockRewardTransaction,true);
-                BlockchainData.getInstance().addTransactionState(initBlockRewardTransaction);  // !!!  Simply   add a transaction into our current transaction ledger
+            if (initBlockRewardTransaction != null) { // if the initial BlockRewardTransaction exists, then we proceed
+                BlockchainData.getInstance().addTransaction(initBlockRewardTransaction,true); // we add the Transaction reward into the Database
+                BlockchainData.getInstance().addTransactionState(initBlockRewardTransaction);  // !!! Add the tx State (in memory only) :   Simply   add a transaction into our current transaction ledger
             }
             blockchainStmt.close();
             blockchainConnection.close();

@@ -60,7 +60,7 @@ public class Block implements Serializable {
     //This constructor is used only for creating the first block in the blockchain.
     public Block() {
         prevHash = new byte[]{0};
-    }
+    } //1st Block is always set with prevHash=0
 
 
 
