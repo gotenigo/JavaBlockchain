@@ -24,12 +24,12 @@ public class Transaction implements Serializable { // Needed to go through the N
    private String timestamp; // timestamp at which the transaction has occurred
    private byte[] signature;   // encrypted (hash) of all the field. it will be used to validate the transaction
    private  String signatureFX; // a copy of signature in String (not byte)
-   private Integer ledgerId; // the Id of the Ledger (helpful for database reconciliation )
+   private Integer blockId; // the Id of the Ledger (helpful for database reconciliation )
 
 
    //Constructor for loading with existing signature
    //When re retrieved Data from the database
-   public Transaction(byte[] from, byte[] to, Integer value, byte[] signature, Integer ledgerId,
+   public Transaction(byte[] from, byte[] to, Integer value, byte[] signature, Integer blockId,
                       String timeStamp) {
       Base64.Encoder encoder = Base64.getEncoder();
       this.from = from;
@@ -39,7 +39,7 @@ public class Transaction implements Serializable { // Needed to go through the N
       this.value = value;
       this.signature = signature;
       this.signatureFX = encoder.encodeToString(signature);
-      this.ledgerId = ledgerId;
+      this.blockId = blockId;
       this.timestamp = timeStamp;
    }
 
@@ -47,7 +47,7 @@ public class Transaction implements Serializable { // Needed to go through the N
    //Constructor for creating a new transaction and signing it.
    //Used BAU to create a new Transaction
    // Object Wallet hold both public and private key
-   public Transaction (Wallet fromWallet, byte[] toAddress, Integer value, Integer ledgerId,
+   public Transaction (Wallet fromWallet, byte[] toAddress, Integer value, Integer blockId,
                        Signature signing) throws InvalidKeyException, SignatureException {
 
       Base64.Encoder encoder = Base64.getEncoder();
@@ -56,7 +56,7 @@ public class Transaction implements Serializable { // Needed to go through the N
       this.to = toAddress;
       this.toFX = encoder.encodeToString(toAddress);
       this.value = value;
-      this.ledgerId = ledgerId;
+      this.blockId = blockId;
       this.timestamp = LocalDateTime.now().toString();
       signing.initSign(fromWallet.getPrivateKey());
       String sr = this.toString();
@@ -87,7 +87,7 @@ public class Transaction implements Serializable { // Needed to go through the N
               ", to=" + Arrays.toString(to) +
               ", value=" + value +
               ", timeStamp= " + timestamp +
-              ", ledgerId=" + ledgerId +
+              ", blockId=" + blockId +
               '}';
    }
 
@@ -104,8 +104,8 @@ public class Transaction implements Serializable { // Needed to go through the N
    public void setValue(Integer value) { this.value = value; }
    public byte[] getSignature() { return signature; }
 
-   public Integer getLedgerId() { return ledgerId; }
-   public void setLedgerId(Integer ledgerId) { this.ledgerId = ledgerId; }
+   public Integer getblockId() { return blockId; }
+   public void setblockId(Integer blockId) { this.blockId = blockId; }
 
    public String getTimestamp() { return timestamp; }
 

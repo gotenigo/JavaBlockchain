@@ -100,7 +100,7 @@ public class ECoin extends Application {
                     " ID INTEGER NOT NULL UNIQUE, " +
                     " PREVIOUS_HASH BLOB UNIQUE, " +
                     " CURRENT_HASH BLOB UNIQUE, " +
-                    " LEDGER_ID INTEGER NOT NULL UNIQUE, " +
+                    " BLOCK_ID INTEGER NOT NULL UNIQUE, " +
                     " CREATED_ON  TEXT, " +
                     " CREATED_BY  BLOB, " +
                     " MINING_POINTS  TEXT, " +
@@ -124,12 +124,12 @@ public class ECoin extends Application {
 
 
                 PreparedStatement pstmt = blockchainConnection
-                        .prepareStatement("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH , LEDGER_ID," + // we save that Block into the database
+                        .prepareStatement("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH , BLOCK_ID," + // we save that Block into the database
                                 " CREATED_ON, CREATED_BY,MINING_POINTS,LUCK ) " +
                         " VALUES (?,?,?,?,?,?,?) ");
                 pstmt.setBytes(1, firstBlock.getPrevHash());
                 pstmt.setBytes(2, firstBlock.getCurrHash());
-                pstmt.setInt(3, firstBlock.getLedgerId());
+                pstmt.setInt(3, firstBlock.getblockId());
                 pstmt.setString(4, firstBlock.getTimeStamp());
                 pstmt.setBytes(5, WalletData.getInstance().getWallet().getPublicKey().getEncoded());
                 pstmt.setInt(6, firstBlock.getMiningPoints());
@@ -146,7 +146,7 @@ public class ECoin extends Application {
                     " ID INTEGER NOT NULL UNIQUE, " +
                     " \"FROM\" BLOB, " +
                     " \"TO\" BLOB, " +
-                    " LEDGER_ID INTEGER, " +
+                    " BLOCK_ID INTEGER, " +
                     " VALUE INTEGER, " +
                     " SIGNATURE BLOB UNIQUE, " +
                     " CREATED_ON TEXT, " +

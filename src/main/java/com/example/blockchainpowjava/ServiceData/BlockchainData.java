@@ -170,11 +170,11 @@ public class BlockchainData {
 
                 PreparedStatement pstmt;
                 pstmt = connection.prepareStatement("INSERT INTO TRANSACTIONS" +
-                        "(\"FROM\", \"TO\", LEDGER_ID, VALUE, SIGNATURE, CREATED_ON) " +
+                        "(\"FROM\", \"TO\", BLOCK_ID, VALUE, SIGNATURE, CREATED_ON) " +
                         " VALUES (?,?,?,?,?,?) ");
                 pstmt.setBytes(1, transaction.getFrom());
                 pstmt.setBytes(2, transaction.getTo());
-                pstmt.setInt(3, transaction.getLedgerId());
+                pstmt.setInt(3, transaction.getblockId());
                 pstmt.setInt(4, transaction.getValue());
                 pstmt.setBytes(5, transaction.getSignature());
                 pstmt.setString(6, transaction.getTimestamp());
@@ -206,18 +206,18 @@ public class BlockchainData {
             ResultSet resultSet = stmt.executeQuery(" SELECT * FROM BLOCKCHAIN ");
             while (resultSet.next()) {
                 // we add each Block into the Blockchain (LinkedList<Block>) => currentBlockChain
-                this.currentBlockChain.add(new Block(        // each Block holds a List<Transaction> . And Each Transaction comes under an Id called ledgerID (Integer)
+                this.currentBlockChain.add(new Block(        // each Block holds a List<Transaction> . And Each Transaction comes under an Id called blockId (Integer)
                         resultSet.getBytes("PREVIOUS_HASH"),
                         resultSet.getBytes("CURRENT_HASH"),
                         resultSet.getString("CREATED_ON"),
                         resultSet.getBytes("CREATED_BY"),
-                        resultSet.getInt("LEDGER_ID"),
+                        resultSet.getInt("BLOCK_ID"),
                         resultSet.getInt("MINING_POINTS"),
                         resultSet.getDouble("LUCK"),
-                        loadtransactionList(resultSet.getInt("LEDGER_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionList with the ledgerID
+                        loadtransactionList(resultSet.getInt("BLOCK_ID"))  // we are in new Block, so we need an ArrayList<Transaction>. As such we  resolve the  ArrayList<Transaction> from transactionList with the blockId
                                                                     // the List of Transaction is in the Table Transaction
-                                                                        //" SELECT  * FROM TRANSACTIONS WHERE LEDGER_ID = ?"
-                                                                            // So we pull from the database all transaction belonging to the same Block (LEDGER_ID)
+                                                                        //" SELECT  * FROM TRANSACTIONS WHERE BLOCK_ID = ?"
+                                                                            // So we pull from the database all transaction belonging to the same Block (BLOCK_ID)
                 ));
             }
 
@@ -225,7 +225,7 @@ public class BlockchainData {
 
             Transaction transaction = new Transaction(new Wallet(),  // we create a new reward Transaction. This is reward Transaction for our future Block
                     WalletData.getInstance().getWallet().getPublicKey().getEncoded(),
-                    100 /*reward*/ , latestBlock.getLedgerId() + 1, signing);
+                    100 /*reward*/ , latestBlock.getblockId() + 1, signing);
 
             newBlockTransactions.clear();    // Remember !!! ObservableList<Transaction> newBlockTransactions
             newBlockTransactions.add(transaction);
@@ -250,17 +250,17 @@ public class BlockchainData {
      *  This method load the transaction ledger for each block from the database to the application
      *
      *
-     * @param ledgerID
+     * @param blockId
      * @return
      * @throws SQLException
      *****************************************/
-    private ArrayList<Transaction> loadtransactionList(Integer ledgerID) throws SQLException {
+    private ArrayList<Transaction> loadtransactionList(Integer blockId) throws SQLException {
         ArrayList<Transaction> transactions = new ArrayList<>();
         try {
             Connection connection = DriverManager.getConnection(Config.getInstance().getDB_BLOCKCHAIN_URL());
             PreparedStatement stmt = connection.prepareStatement
-                    (" SELECT  * FROM TRANSACTIONS WHERE LEDGER_ID = ?");
-            stmt.setInt(1, ledgerID);
+                    (" SELECT  * FROM TRANSACTIONS WHERE BLOCK_ID = ?");
+            stmt.setInt(1, blockId);
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()) {
                 transactions.add(new Transaction(
@@ -268,7 +268,7 @@ public class BlockchainData {
                         resultSet.getBytes("TO"),
                         resultSet.getInt("VALUE"),
                         resultSet.getBytes("SIGNATURE"),
-                        resultSet.getInt("LEDGER_ID"),
+                        resultSet.getInt("BLOCK_ID"),
                         resultSet.getString("CREATED_ON")
                 ));
             }
@@ -333,7 +333,7 @@ public class BlockchainData {
                                                                     // we copied in our latestBlock
 
         Transaction transaction = new Transaction(new Wallet(), minersWallet.getPublicKey().getEncoded(),  // we create biw  a bew reward transaction
-                100, latestBlock.getLedgerId() + 1, signing);
+                100, latestBlock.getblockId() + 1, signing);
         newBlockTransactions.clear(); // newBlockTransactions contains now an old transaction  of the block we have finalized. So we clear newBlockTransactions out
         newBlockTransactions.add(transaction); // !!! newBlockTransactions is now loaded with the next reward transaction for the next mining cycle
                                                 // This reward Transaction is what the miner gets for  successfully mining the next block
@@ -344,11 +344,11 @@ public class BlockchainData {
             Connection connection = DriverManager.getConnection(Config.getInstance().getDB_BLOCKCHAIN_URL());
             PreparedStatement pstmt;
             pstmt = connection.prepareStatement
-                    ("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH, LEDGER_ID, CREATED_ON," +
+                    ("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH, BLOCK_ID, CREATED_ON," +
                             " CREATED_BY, MINING_POINTS, LUCK) VALUES (?,?,?,?,?,?,?) ");
             pstmt.setBytes(1, block.getPrevHash());
             pstmt.setBytes(2, block.getCurrHash());
-            pstmt.setInt(3, block.getLedgerId());
+            pstmt.setInt(3, block.getblockId());
             pstmt.setString(4, block.getTimeStamp());
             pstmt.setBytes(5, block.getMinedBy());
             pstmt.setInt(6, block.getMiningPoints());
@@ -379,7 +379,7 @@ public class BlockchainData {
             connection.close();
             for (Block block : receivedBC) {
 
-                //                    ("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH, LEDGER_ID, CREATED_ON," +
+                //                    ("INSERT INTO BLOCKCHAIN(PREVIOUS_HASH, CURRENT_HASH, BLOCK_ID, CREATED_ON," +
                 //                            " CREATED_BY, MINING_POINTS, LUCK) VALUES (?,?,?,?,?,?,?) ");
                 addBlock(block);             //  !!! we add the  Block into the database
 
@@ -387,7 +387,7 @@ public class BlockchainData {
                 block.getTransactionList().sort(transactionComparator);
                 for (Transaction transaction : block.getTransactionList()) {
 
-                    //"INSERT INTO TRANSACTIONS" + "(\"FROM\", \"TO\", LEDGER_ID, VALUE, SIGNATURE, CREATED_ON) " +" VALUES (?,?,?,?,?,?) ");
+                    //"INSERT INTO TRANSACTIONS" + "(\"FROM\", \"TO\", BLOCK_ID, VALUE, SIGNATURE, CREATED_ON) " +" VALUES (?,?,?,?,?,?) ");
                     addTransaction(transaction, rewardTransaction);  // !!! We add the reward transaction into the database   //
 
                     rewardTransaction = false;
@@ -464,7 +464,7 @@ public class BlockchainData {
         for (Transaction transaction : receivedBC.getLast().getTransactionList()) {
             if (!getCurrentBlockChain().getLast().getTransactionList().contains(transaction) ) {
                 getCurrentBlockChain().getLast().getTransactionList().add(transaction);
-                log.info("current ledger id = " + getCurrentBlockChain().getLast().getLedgerId() + " transaction id = " + transaction.getLedgerId());
+                log.info("current ledger id = " + getCurrentBlockChain().getLast().getblockId() + " transaction id = " + transaction.getblockId());
                 addTransaction(transaction, false);
             }
         }

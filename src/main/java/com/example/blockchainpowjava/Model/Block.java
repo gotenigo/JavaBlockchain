@@ -21,7 +21,7 @@ public class Block implements Serializable {
     private byte[] currHash;  //the hash of this block. The Hash here is calculated with the private key of miner who got to mine this Block
     private String timeStamp; // The timestamp of the creation of this block (when it was mined)
     private byte[] minedBy; // will hold the public key of the miner who managed to mine that block. this value is used in the Verification process to check the currHash is valid
-    private Integer ledgerId = 1; // this is just the TransactionId (Block -> Transaction is a oneToMany relationship) .  this field helps us to identity the correct Ledger for this block. helpful for Database lookup against table Block and Transaction
+    private Integer blockId = 1; // this is just the TransactionId (Block -> Transaction is a oneToMany relationship) .  this field helps us to identity the correct Ledger for this block. helpful for Database lookup against table Block and Transaction
     private Integer miningPoints = 0;
     private Double luck = 0.0;
 
@@ -32,13 +32,13 @@ public class Block implements Serializable {
     //This constructor is used when we retrieve it from the db
     // Here we retrieve all the blocks completely finalized
     //this constructor helps us to instantiate the block with all the fields properly
-    public Block(byte[] prevHash, byte[] currHash, String timeStamp, byte[] minedBy,Integer ledgerId,
+    public Block(byte[] prevHash, byte[] currHash, String timeStamp, byte[] minedBy,Integer blockId,
                  Integer miningPoints, Double luck, ArrayList<Transaction> transactionList) {
         this.prevHash = prevHash;
         this.currHash = currHash;
         this.timeStamp = timeStamp;
         this.minedBy = minedBy;
-        this.ledgerId = ledgerId;
+        this.blockId = blockId;
         this.transactionList = transactionList;
         this.miningPoints = miningPoints;
         this.luck = luck;
@@ -51,7 +51,7 @@ public class Block implements Serializable {
     public Block(LinkedList<Block> currentBlockChain) {
         Block lastBlock = currentBlockChain.getLast();
         prevHash = lastBlock.getCurrHash();
-        ledgerId = lastBlock.getLedgerId() + 1;
+        blockId = lastBlock.getblockId() + 1;
         luck = Math.random() * 1000000;
     }
 
@@ -75,7 +75,7 @@ public class Block implements Serializable {
 
         signature.initVerify(new DSAPublicKeyImpl(this.minedBy));// We initiate the signature parameter  by using public Key  from minedBy
         signature.update(this.toString().getBytes()); // we insert the Data we want to verify (data in clear).
-                                            // in this case, its the content of the String Method : prevHash + timeStamp + minedBy + ledgerId + miningPoints + luck
+                                            // in this case, its the content of the String Method : prevHash + timeStamp + minedBy + blockId + miningPoints + luck
 
         return signature.verify(this.currHash); // Return Boolean  after verifying the dara contained in this class against currHash
 
@@ -124,8 +124,8 @@ public class Block implements Serializable {
     public Double getLuck() { return luck; }
     public void setLuck(Double luck) { this.luck = luck; }
 
-    public Integer getLedgerId() { return ledgerId; }
-    public void setLedgerId(Integer ledgerId) { this.ledgerId = ledgerId; }
+    public Integer getblockId() { return blockId; }
+    public void setblockId(Integer blockId) { this.blockId = blockId; }
 
 
 
@@ -137,7 +137,7 @@ public class Block implements Serializable {
                 "prevHash=" + Arrays.toString(prevHash) +
                 ", timeStamp='" + timeStamp + '\'' +
                 ", minedBy=" + Arrays.toString(minedBy) +
-                ", ledgerId=" + ledgerId +
+                ", blockId=" + blockId +
                 ", miningPoints=" + miningPoints +
                 ", luck=" + luck +
                 '}';

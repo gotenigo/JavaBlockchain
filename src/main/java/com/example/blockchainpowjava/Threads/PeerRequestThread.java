@@ -37,7 +37,7 @@ public class PeerRequestThread extends Thread {
 
             LinkedList<Block> recievedBC = (LinkedList<Block>) objectInput.readObject(); // read from the  InputStream. We should ge a LinkedList<Block>
 
-            log.info("LedgerId = " + recievedBC.getLast().getLedgerId()  +
+            log.info("blockId = " + recievedBC.getLast().getblockId()  +
                     " Size= " + recievedBC.getLast().getTransactionList().size());
 
             // The same service layer BlockchainData is used to validate the Blockchain
