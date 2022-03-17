@@ -339,6 +339,13 @@ public class BlockchainData {
                                                 // This reward Transaction is what the miner gets for  successfully mining the next block
     }
 
+
+    /*********************
+     *
+     *  Add the Block into the Database
+     *
+     * @param block
+     *****************/
     private void addBlock(Block block) {
         try {
             Connection connection = DriverManager.getConnection(Config.getInstance().getDB_BLOCKCHAIN_URL());

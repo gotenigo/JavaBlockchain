@@ -44,8 +44,8 @@ public class MiningThread extends Thread {
                 log.info("BlockChain is current, mining will commence in " +     // if so then we print the remaining time (until 60s timeframe)
                         ((timeOfLastMinedBlock + BlockchainData.getMiningInterval()) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) ) + " seconds");
             } else {
-                log.info("MINING NEW BLOCK"); //  Create a new Block.we are between 60s - 65s time windows where a new Block needs to be created. So it's time to create a new Block
-                    BlockchainData.getInstance().mineBlock();   // !!!! uses BlockchainData to Mine a new Block !!!!!
+                log.info("MINING NEW BLOCK"); //  Create a new Block.we are between 60s - 65s (5s) time windows where a new Block needs to be created. So it's time to create a new Block
+                    BlockchainData.getInstance().mineBlock();   // !!!! uses BlockchainData to Mine a new Block !!!!! finalizeBlock + save it into the Database
 
                     log.info("The Wallet balance is now ="+BlockchainData.getInstance().getWalletBallanceFX());   // Print our new wallet Balance by using  service layer BlockchainData
             }
