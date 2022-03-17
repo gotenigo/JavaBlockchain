@@ -115,7 +115,7 @@ public class BlockchainData {
 
     /********************************
      *   This method validate our own Blockchain as well as the Blockchain received by other peer (miners) on the network
-     *   This method that actually checks the validity  of each transaction and each blocks
+     *   This method that actually checks the validity  of each transaction of/and each blocks
      *
      * @param currentBlockChain
      * @throws GeneralSecurityException
@@ -127,8 +127,8 @@ public class BlockchainData {
                 throw new GeneralSecurityException("Block validation failed");
             }
 
-            ArrayList<Transaction> transactions = block.getTransactionLedger();  // then go through the Transaction of the particular Block
-            for (Transaction transaction : transactions) {
+            ArrayList<Transaction> transactionList = block.getTransactionLedger();  // then go through the Transaction of the particular Block
+            for (Transaction transaction : transactionList) {
                 if (!transaction.isVerified(signing)) {
                     throw new GeneralSecurityException("Transaction validation failed");
                 }
