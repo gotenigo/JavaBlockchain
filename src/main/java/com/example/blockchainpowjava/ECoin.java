@@ -165,6 +165,7 @@ public class ECoin extends Application {
             e.printStackTrace();
         }
         BlockchainData.getInstance().loadBlockChain();   // !!!!! We reload the entire Blockchain from the Database
+                                                        // this will be our current Blockchain  as part of the inittalisation
     }
 }
 
