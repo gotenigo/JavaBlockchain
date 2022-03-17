@@ -21,7 +21,7 @@ public class Block implements Serializable {
     private byte[] currHash;  //the hash of this block. The Hash here is calculated with the private key of miner who got to mine this Block
     private String timeStamp; // The timestamp of the creation of this block (when it was mined)
     private byte[] minedBy; // will hold the public key of the miner who managed to mine that block. this value is used in the Verification process to check the currHash is valid
-    private Integer ledgerId = 1; // this field helps us to identity the correct Ledger for this block. helpful for Database lookup against table Block and Transaction
+    private Integer ledgerId = 1; // this is just the TransactionId (Block -> Transaction is a oneToMany relationship) .  this field helps us to identity the correct Ledger for this block. helpful for Database lookup against table Block and Transaction
     private Integer miningPoints = 0;
     private Double luck = 0.0;
 
