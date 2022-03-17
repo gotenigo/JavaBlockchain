@@ -464,7 +464,7 @@ public class BlockchainData {
         for (Transaction transaction : receivedBC.getLast().getTransactionList()) {
             if (!getCurrentBlockChain().getLast().getTransactionList().contains(transaction) ) {
                 getCurrentBlockChain().getLast().getTransactionList().add(transaction);
-                log.info("current ledger id = " + getCurrentBlockChain().getLast().getblockId() + " transaction id = " + transaction.getblockId());
+                log.info("current blockId id = " + getCurrentBlockChain().getLast().getblockId() + " transaction id = " + transaction.getblockId());
                 addTransaction(transaction, false);
             }
         }

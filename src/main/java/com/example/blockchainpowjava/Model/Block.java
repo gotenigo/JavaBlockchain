@@ -125,7 +125,7 @@ public class Block implements Serializable {
     public void setLuck(Double luck) { this.luck = luck; }
 
     public Integer getblockId() { return blockId; }
-    public void setblockId(Integer blockId) { this.blockId = blockId; }
+    public void setBlockId(Integer blockId) { this.blockId = blockId; }
 
 
 

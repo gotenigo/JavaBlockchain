@@ -105,7 +105,7 @@ public class Transaction implements Serializable { // Needed to go through the N
    public byte[] getSignature() { return signature; }
 
    public Integer getblockId() { return blockId; }
-   public void setblockId(Integer blockId) { this.blockId = blockId; }
+   public void setBlockId(Integer blockId) { this.blockId = blockId; }
 
    public String getTimestamp() { return timestamp; }
 
