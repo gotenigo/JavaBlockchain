@@ -9,6 +9,7 @@ import com.example.blockchainpowjava.Threads.MiningThread;
 import com.example.blockchainpowjava.Threads.PeerClient;
 import com.example.blockchainpowjava.Threads.PeerServer;
 import com.example.blockchainpowjava.Threads.UI;
+import com.example.blockchainpowjava.configuration.Config;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -34,6 +35,9 @@ import java.time.LocalDateTime;
 
 public class ECoin extends Application {
 
+    private Config config;
+
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -43,7 +47,7 @@ public class ECoin extends Application {
 
         new UI().start(primaryStage);
         new PeerClient().start();  // we start PeerClient Thread  to send nd receive Blockchain from other Node operator
-        new PeerServer(6000).start(); // we start PeerServer Thread to keep listening Network request from Node operator
+        new PeerServer( config.getSERVER_PORT() ).start(); // we start PeerServer Thread to keep listening Network request from Node operator
         new MiningThread().start();
 
     }
@@ -51,10 +55,17 @@ public class ECoin extends Application {
     @Override
     public void init() {
         try {
+
+            //String dbWalletPath = "G:\\demo\\BlockchainPowJava\\src\\main\\db\\wallet.db";
+            //String dbBlockchainPath = "G:\\demo\\BlockchainPowJava\\src\\main\\db\\blockchain.db";
+            //this.config = Config.getInstance( dbWalletPath, dbBlockchainPath,null,null );
+            this.config = Config.getInstance();
+
+
             //This creates your wallet if there is none and gives you a KeyPair.
             //We will create it in separate db for better security and ease of portability.
             Connection walletConnection = DriverManager
-                    .getConnection("jdbc:sqlite:G:\\demo\\BlockchainPowJava\\src\\main\\db\\wallet.db");
+                    .getConnection( config.getDB_WALLET_URL()  );
             Statement walletStatment = walletConnection.createStatement();
             walletStatment.executeUpdate("CREATE TABLE IF NOT EXISTS WALLET ( " +
                     " PRIVATE_KEY BLOB NOT NULL UNIQUE, " +
@@ -81,7 +92,7 @@ public class ECoin extends Application {
 
 //          This will create the db tables with columns for the Blockchain.
             Connection blockchainConnection = DriverManager
-                    .getConnection("jdbc:sqlite:G:\\demo\\BlockchainPowJava\\src\\main\\db\\blockchain.db");
+                    .getConnection(config.getDB_WALLET_URL());
             Statement blockchainStmt = blockchainConnection.createStatement();
             blockchainStmt.executeUpdate("CREATE TABLE IF NOT EXISTS BLOCKCHAIN ( " +
                     " ID INTEGER NOT NULL UNIQUE, " +

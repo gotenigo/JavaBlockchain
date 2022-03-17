@@ -2,6 +2,7 @@ package com.example.blockchainpowjava.ServiceData;
 
 
 import com.example.blockchainpowjava.Model.Wallet;
+import com.example.blockchainpowjava.configuration.Config;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -38,11 +39,10 @@ public class WalletData {
 
     //This will load your wallet from the database.
     public void loadWallet() throws SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
-        Connection walletConnection = DriverManager.getConnection(
-                "jdbc:sqlite:G:\\demo\\BlockchainPowJava\\src\\main\\db\\wallet.db");
-        Statement walletStatment = walletConnection.createStatement();
+        Connection walletConnection = DriverManager.getConnection( Config.getInstance().getDB_WALLET_URL());
+        Statement walletStatement = walletConnection.createStatement();
         ResultSet resultSet;
-        resultSet = walletStatment.executeQuery(" SELECT * FROM WALLET ");
+        resultSet = walletStatement.executeQuery(" SELECT * FROM WALLET ");
 
         KeyFactory keyFactory = KeyFactory.getInstance("DSA"); // this is Class from java.security package. It will help us to generate a  PublicKey/ PrivateKey Object
 

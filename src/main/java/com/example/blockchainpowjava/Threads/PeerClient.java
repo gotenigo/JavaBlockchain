@@ -4,6 +4,7 @@ package com.example.blockchainpowjava.Threads;
 
 import com.example.blockchainpowjava.Model.Block;
 import com.example.blockchainpowjava.ServiceData.BlockchainData;
+import com.example.blockchainpowjava.configuration.Config;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -31,8 +33,10 @@ public class PeerClient extends Thread {
     private Queue<Integer> queue = new ConcurrentLinkedQueue<>();
 
     public PeerClient() {
-        this.queue.add(6001);
-        this.queue.add(6002);
+        List<Integer> clientPostList = Config.getInstance().getCLIENT_PORT_LIST();
+        this.queue.addAll(clientPostList);
+        //this.queue.add(6001);
+        //this.queue.add(6002);
     }
 
     @Override
