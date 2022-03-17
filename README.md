@@ -18,6 +18,9 @@ Block  = List < Transaction >
 
 :-)
 
+we will see more as we navigate through the implementation
+
+
 ![img_1.png](img_1.png)
 
 
