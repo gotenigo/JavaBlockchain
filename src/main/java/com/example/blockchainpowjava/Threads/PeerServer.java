@@ -34,7 +34,7 @@ public class PeerServer extends Thread {
 
                 log.info("Server Listening on port :" + serverSocket.getLocalPort());
 
-                                // we run PeerRequestThread Thread for each  incoming request
+                                // PeerRequestThread Thread will run each time we have a new incoming request
                 new PeerRequestThread(serverSocket.accept()).start();  //Listens for a connection to be made to this socket and accepts it. The method blocks until a connection is made.
                                   //A new Socket s is created and, if there is a security manager, the security manager's checkAccept method is called with s.getInetAddress().getHostAddress() and s.getPort()
                                 // as its arguments to ensure the operation is allowed. This could result in a SecurityException.
