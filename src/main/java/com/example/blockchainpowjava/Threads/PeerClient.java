@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /******************************************
  *
+ *    Run forever !
+ *
  *   !!! Adding a Block into Blockchain  : we Broadcast the mined Block to the rest of the Node operator (miners) !!!
  *
  *  Our PeerClient Thread  will cycle through a predetermined list of peer
@@ -54,15 +56,17 @@ public class PeerClient extends Thread {
                 socket.setSoTimeout(5000);
 
                 ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
+                ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream()); //This constructor will block until the corresponding ObjectOutputStream has written and flushed the header.
 
                 LinkedList<Block> blockChain = BlockchainData.getInstance().getCurrentBlockChain(); // we use the service layer to get the Blockchain object which is a LinkedList<Block>
-                objectOutput.writeObject(blockChain); // Send the Blockchain via the port to the Peer
+                objectOutput.writeObject(blockChain); //!!!  Send the Blockchain via the port to the Peer
                                                                                                     // Object should be a LinkedList<Block>
-                LinkedList<Block> returnedBlockchain = (LinkedList<Block>) objectInput.readObject(); // Read the Blockchain from port (the blockchain send by other Miner on the Network)
+                LinkedList<Block> returnedBlockchain = (LinkedList<Block>) objectInput.readObject(); // !!!  Read the Blockchain from port (the blockchain send by other Miner on the Network)
 
                 log.info(" RETURNED BC blockId = " + returnedBlockchain.getLast().getblockId()  +
                         " Size= " + returnedBlockchain.getLast().getTransactionList().size());
+
+                //log.info(" returnedBlockchain = " + returnedBlockchain);
 
                 BlockchainData.getInstance().getBlockchainConsensus(returnedBlockchain); // we check the Blockchain is valid
                 Thread.sleep(2000);
