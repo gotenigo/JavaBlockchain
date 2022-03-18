@@ -516,7 +516,7 @@ public class BlockchainData {
 
             return getCurrentBlockChain();
         }
-        return null; // both are old   ,  the received one is newer or both are up-to-date
+        return null; //  return null if both are old   ,  the received one is newer or both are up-to-date
     }
 
 
