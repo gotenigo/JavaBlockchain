@@ -292,7 +292,7 @@ public class BlockchainData {
     public void mineBlock() {
         try {
 
-            finalizeBlock(WalletData.getInstance().getWallet()); // performs the necessary steps to finish up the finish  up the latest block
+            finalizeBlock(WalletData.getInstance().getWallet()); // We add create and add the final Block to the currentBlockchain
                                                                 // and adds it to our current Blockchain (LinkedList<Block> currentBlockChain)
             addBlock(latestBlock); // we add the latestBlock to the Database
 
