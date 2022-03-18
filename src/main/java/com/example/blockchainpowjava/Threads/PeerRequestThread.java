@@ -13,8 +13,12 @@ import java.util.LinkedList;
 
 /*********************************************
  *
- *  This Thread handles each specific request that arrives at this peer
+ *  This Thread handles each specific request that arrives at this peer form other peers
  *
+ *  What do we do ?
+ *  1) we get the Blockchain from peer
+ *  2) we run the Consensus through it (Validation of Hash + Check Blockchain is not old + Pickup a wining Blockchain based ont the Mining point + Lucky)
+ *  3) we send it back to th peer
  *
  *************************************/
 @Slf4j
