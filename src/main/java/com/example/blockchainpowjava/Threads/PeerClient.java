@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /******************************************
  *
- *   !!! Adding a Block into Blockchain  : we Broadcast the mined Block to the rest of the Node (miners) !!!
+ *   !!! Adding a Block into Blockchain  : we Broadcast the mined Block to the rest of the Node operator (miners) !!!
  *
  *  Our PeerClient Thread  will cycle through a predetermined list of peer
  *  and try to share our blockchain  with them. Since we intend to constantly contact other peers
@@ -57,7 +57,7 @@ public class PeerClient extends Thread {
                 ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream());
 
                 LinkedList<Block> blockChain = BlockchainData.getInstance().getCurrentBlockChain(); // we use the service layer to get the Blockchain object which is a LinkedList<Block>
-                objectOutput.writeObject(blockChain); // Send the Blockchain via the port
+                objectOutput.writeObject(blockChain); // Send the Blockchain via the port to the Peer
                                                                                                     // Object should be a LinkedList<Block>
                 LinkedList<Block> returnedBlockchain = (LinkedList<Block>) objectInput.readObject(); // Read the Blockchain from port (the blockchain send by other Miner on the Network)
 

@@ -452,7 +452,7 @@ public class BlockchainData {
              // if only the transaction ledgers are different then combine them.
             } else if (!receivedBC.getLast().getTransactionList().equals(getCurrentBlockChain() // Here we compare the Transaction ledger
                     .getLast().getTransactionList())) {
-                updatetransactionLists(receivedBC);   // we merge both transaction
+                updateTransactionLists(receivedBC);   // we merge both transaction
                 log.info("Transaction ledgers updated");
                 return receivedBC;
             } else {
@@ -468,7 +468,7 @@ public class BlockchainData {
 
 
 
-    private void updatetransactionLists(LinkedList<Block> receivedBC) throws GeneralSecurityException {
+    private void updateTransactionLists(LinkedList<Block> receivedBC) throws GeneralSecurityException {
         for (Transaction transaction : receivedBC.getLast().getTransactionList()) {
             if (!getCurrentBlockChain().getLast().getTransactionList().contains(transaction) ) {
                 getCurrentBlockChain().getLast().getTransactionList().add(transaction);
