@@ -443,6 +443,7 @@ public class BlockchainData {
                 // from here, it means both Blockchain have different miner on the last Block. Then we have to perform our consensus.
                 // We need to work out which miner gets to mine the last block
 
+                // Is the received Blockchain older than 60s which the timeout set for creating a Block. (This is a realtime Application, we want every Block to be created within 60s )
                 if (checkIfOutdated(receivedBC) != null) {  // if the Blockchain  is outdated (older than the mining interval), then the Blockchain wont be selected
                               // if out outdated, then we keep the Received blockchain. If both are outdated, then we dont do anything and we wait for the next UP-to-date Blockchain
 
