@@ -36,7 +36,7 @@ public class BlockchainData {
 
     private LinkedList<Block> currentBlockChain = new LinkedList<>(); // This is our current Blockchain. It' s a LinkedList<Block>
 
-    private Block latestBlock; // represent the latest Block we are trying to add to the Blockchain
+    private Block latestBlock; // represent the latest Block we are trying to add to the Blockchain // we create a new one each time we call mineBlock() or loadBlockChain()
     private boolean exit = false; // exit Boolean that helps the exit command for our front-end-work
     private int miningPoints; // help us to track the mining point  that we use in our consensus Algorithms
     private static final int TIMEOUT_INTERVAL = 65;    // timeout Interval used to define if the Blockchain is too old
