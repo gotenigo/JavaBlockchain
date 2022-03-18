@@ -506,9 +506,9 @@ public class BlockchainData {
                 (lastMinedRcvdBlock + TIMEOUT_INTERVAL) >= LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {
             //we reset the mining points since we weren't contributing until now.
             setMiningPoints(0);
-            replaceBlockchainInDatabase(receivedBC);
-            setCurrentBlockChain(new LinkedList<>());
-            loadBlockChain();
+            replaceBlockchainInDatabase(receivedBC);  // !!! we replace the Blockchain in Database
+            setCurrentBlockChain(new LinkedList<>());  //  !!! we re-set the current Blockchain
+            loadBlockChain();   // We read the full Blockchain from Database
             log.info("received blockchain won!, local BC was old");
             //If received one is old but local is new send ours to them
         } else if ((lastMinedLocalBlock + TIMEOUT_INTERVAL) > LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) &&
