@@ -437,7 +437,7 @@ public class BlockchainData {
             //Verify the validity of the received blockchain.
             verifyBlockChain(receivedBC); // we need to very each Blockchain we get from peer
 
-            //Check if we have received an identical blockchain.
+            // Is this Blockchain the same as what we have already ? We check the Hash of the latest Block to confirm
             if (!Arrays.equals(receivedBC.getLast().getCurrHash(), getCurrentBlockChain().getLast().getCurrHash())) { // this is the 1st comparison. We check both Blockchain's Block via the getLast() method
 
                 // from here, it means both Blockchain have different miner on the last Block. Then we have to perform our consensus.
