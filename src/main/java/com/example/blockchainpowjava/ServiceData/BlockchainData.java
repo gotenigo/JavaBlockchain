@@ -308,13 +308,13 @@ public class BlockchainData {
      * This method performs the necessary steps to finish up the finish  up the latest block
      *   and adds it to our current Blockchain (LinkedList<Block> currentBlockChain)
      *
-     *    What we do :
+     *    What we do  for finalizeBlock :
      *    1) We create a new Block that will serve as the latest Block
-     *    2) We set that Block with  newTransactionList (it should contain at least the reward as Transaction number 1)
+     *    2) We set that Block with  newTransactionList (it should contain at least the reward as Transaction number 1) *********** !
      *    2) We set the TimeStamp of the Block to the current time
      *    3) We  set the attributes of the Block  MinedBy  + miningPoints
      *    4) We sign the Block (setCurrHash)
-     *    5) Finally, We add the Block to the currentBlockChain (the final Block :-) )
+     *    5) Finally, We add the Block to the currentBlockChain (the final Block :-) )  ************ !
      *    6) Also we create reset newTransactionList with a new Transaction reward of 100 (this is for the next mining cycle)
      *
      *
