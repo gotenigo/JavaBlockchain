@@ -53,7 +53,7 @@ public class PeerClient extends Thread {
 
                 log.info("Sending blockchain object on port: " + queue.peek());
                 queue.add(queue.poll()); // rotate the port order // so  we rotate at each iteration while(true)
-                socket.setSoTimeout(5000);
+                socket.setSoTimeout(5000); // we set a timeout to the Socket
 
                 ObjectOutputStream objectOutput = new ObjectOutputStream(socket.getOutputStream());
                 ObjectInputStream objectInput = new ObjectInputStream(socket.getInputStream()); //This constructor will block until the corresponding ObjectOutputStream has written and flushed the header.
